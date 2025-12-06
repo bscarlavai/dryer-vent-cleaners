@@ -342,6 +342,7 @@ async function migrateLocation(location, stats) {
       console.log(`  ⬆️  Uploading ${imageType}...`);
 
       const cfImageId = await uploadImageFromUrl(originalUrl, {
+        site: 'dryer-vent-cleaners',
         location_id: location.id,
         location_name: location.name,
         type: imageType,
