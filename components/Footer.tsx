@@ -53,7 +53,7 @@ export default function Footer({ locationId }: { locationId?: string }) {
 
   const quickLinks = [
     { name: 'Browse States', href: '/states' },
-    { name: 'Taekwondo Near Me', href: '/taekwondo-near-me' },
+    { name: 'Dryer Vent Cleaning Near Me', href: '/dryer-vent-cleaning-near-me' },
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Terms of Service', href: '/terms' },
     { name: 'Sitemap', href: '/sitemap.xml' },
@@ -68,19 +68,19 @@ export default function Footer({ locationId }: { locationId?: string }) {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <img
-                src="/dojangs.png"
-                alt="Dojangs - Find Taekwondo Schools"
+                src="/dryerventcleaners.png"
+                alt="Dryer Vent Cleaners - Find Dryer Vent Cleaning Services"
                 className="h-12 w-12"
               />
               <div>
                 <h4 className="text-lg font-semibold">About Our Directory</h4>
-                <p className="text-primary-light-200 text-xs">Find Local Taekwondo Schools</p>
+                <p className="text-primary-light-200 text-xs">Find Local Dryer Vent Cleaners</p>
               </div>
             </div>
             <p className="text-primary-light-200 text-sm leading-relaxed">
-              Your comprehensive directory for finding the best taekwondo schools and dojangs across
-              the United States. Discover local taekwondo classes for all ages and skill levels,
-              from beginners to advanced martial artists.
+              Your comprehensive directory for finding professional dryer vent cleaning services across
+              the United States. Discover local dryer vent cleaners for residential and commercial needs,
+              helping keep your home safe and your dryer running efficiently.
             </p>
           </div>
 
@@ -127,7 +127,7 @@ export default function Footer({ locationId }: { locationId?: string }) {
                         href={`/states/${state.toLowerCase().replace(/\s+/g, '-')}`}
                         className="text-primary-light-200 hover:text-white transition-colors text-sm"
                       >
-                        {state} Taekwondo
+                        {state} Dryer Vent Cleaning
                       </Link>
                     </li>
                   ))
@@ -150,7 +150,7 @@ export default function Footer({ locationId }: { locationId?: string }) {
                         href={`/cities/${slugify(city)}-${slugify(state)}`}
                         className="text-primary-light-200 hover:text-white transition-colors text-sm"
                       >
-                        {city}, {state} Taekwondo
+                        {city}, {state} Dryer Vent Cleaning
                       </Link>
                     </li>
                   ))
@@ -163,15 +163,15 @@ export default function Footer({ locationId }: { locationId?: string }) {
         <div className="border-t border-primary-light-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-primary-light-200 text-sm">
-              © {currentYear} Dojangs. All rights reserved.
+              © {currentYear} Dryer Vent Cleaners. All rights reserved.
             </p>
             <div className="flex items-center space-x-4 text-sm text-primary-light-200">
               <span>
-                Helping martial artists find the best taekwondo schools since 2025
+                Helping homeowners find professional dryer vent cleaning services since 2025
               </span>
               <span>•</span>
               <a
-                href="https://www.google.com/search?q=dojangs+taekwondo"
+                href="https://www.google.com/search?q=dryer+vent+cleaning"
                 className="hover:text-white transition-colors flex items-center"
                 target="_blank"
                 rel="noopener noreferrer"

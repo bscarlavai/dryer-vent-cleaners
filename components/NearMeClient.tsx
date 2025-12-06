@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Search, MapPinIcon, Coffee, Telescope, BadgeQuestionMark, Award } from 'lucide-react'
+import { Search, MapPinIcon, Coffee, Telescope, BadgeQuestionMark, BrushCleaning } from 'lucide-react'
 import { getSupabaseClient } from '@/lib/supabase'
 import { searchLocationsByLatLng, searchLocationsByZip } from '@/lib/locationUtils';
 import LocationCard from '@/components/LocationCard'
 import TopStatesSection from './TopStatesSection';
 import { getOpen24HourLocationCount } from '@/lib/stateUtils'
-import AdPlacement from '@/components/AdPlacement'
+// DISABLED - Re-enable after domain configuration
+// import AdPlacement from '@/components/AdPlacement'
 
 // Helper function to clean URLs consistently
 function cleanUrl(url: string): string {
@@ -77,7 +78,7 @@ export default function NearMeClient() {
       const results = await searchLocationsByZip(zip, Number(radius))
       setSearchResults(results)
       if (results.length === 0) {
-        setSearchError(`No taekwondo schools found within ${radius} miles of this zip code. Try expanding your search or browse by state.`)
+        setSearchError(`No dryer vent cleaning services found within ${radius} miles of this zip code. Try expanding your search or browse by state.`)
       }
     } catch (error) {
       setSearchError('Invalid zip code. Please enter a valid 5-digit US zip code.')
@@ -91,7 +92,7 @@ export default function NearMeClient() {
     if (!zipCode.trim()) return
 
     // Update the URL with the new zip (shallow routing, no reload)
-    router.replace(`/taekwondo-near-me?zip=${encodeURIComponent(zipCode.trim())}`)
+    router.replace(`/dryer-vent-cleaning-near-me?zip=${encodeURIComponent(zipCode.trim())}`)
 
     await autoSearch(zipCode.trim())
   }
@@ -109,7 +110,7 @@ export default function NearMeClient() {
             const results = await searchLocationsByLatLng(lat, lng, Number(radius));
             setSearchResults(results);
             if (results.length === 0) {
-              setSearchError(`No taekwondo schools found within ${radius} miles of your location. Try expanding your search or browse by state.`);
+              setSearchError(`No dryer vent cleaning services found within ${radius} miles of your location. Try expanding your search or browse by state.`);
             }
           } catch (error) {
             setSearchError('Unable to search by your location. Please try again or use zip code search.');
@@ -130,14 +131,14 @@ export default function NearMeClient() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-primary-light pt-20 pb-14">
+      <section className="bg-primary-light-100 pt-20 pb-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Find Taekwondo Schools Near Me
+              Find Dryer Vent Cleaning Services Near Me
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Explore taekwondo dojangs and martial arts schools in your area. Get directions, hours, and contact details for local taekwondo schools.
+              Discover professional dryer vent cleaning services in your area. Get directions, hours, reviews, and contact details for local dryer vent cleaners.
             </p>
           </div>
         </div>
@@ -150,7 +151,7 @@ export default function NearMeClient() {
               <div className="flex flex-col items-center">
                 <div className="flex items-center justify-center space-x-4 mb-4">
                   <Search className="h-6 w-6 text-primary" />
-                  <span className="text-lg font-medium text-tarawera">Find Taekwondo Schools Near You</span>
+                  <span className="text-lg font-medium text-tarawera">Find Dryer Vent Cleaning Services Near You</span>
                 </div>
                 {/* Zip Code Search Form */}
                 <form onSubmit={handleZipSearch} className="mb-4 w-full">
@@ -247,51 +248,51 @@ export default function NearMeClient() {
         )}
       </section>
 
-      {/* Ad Placement - After search results */}
-      <AdPlacement placeholderId={112} />
+      {/* Ad Placement - DISABLED - Re-enable after domain configuration */}
+      {/* <AdPlacement placeholderId={112} /> */}
 
       {/* SEO/Feature Section - remove card look */}
       <section className="mb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-tarawera mb-4">
-              Taekwondo Schools Near Me – Find the Best Dojangs in Your Area
+              Dryer Vent Cleaning Services Near Me – Find the Best Cleaners in Your Area
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Looking for a taekwondo school near you? Find convenient dojangs where you can learn martial arts with certified instructors. Our nationwide taekwondo directory helps you quickly locate the best schools to start your martial arts journey on your own schedule.
+              Looking for a dryer vent cleaning service near you? Find professional and reliable dryer vent cleaners in your area. Our nationwide directory helps you quickly locate the best services to ensure your dryer is running safely and efficiently.
             </p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Directory Features */}
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center">
-                  <Telescope className="h-6 w-6 text-primary" />
+                <div className="flex-shrink-0">
+                  <Telescope className="h-12 w-12 text-primary" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-tarawera mb-3">
-                    Explore Curated Taekwondo Schools Near You
+                    Explore Professional Dryer Vent Cleaning Services Near You
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    Our directory features curated taekwondo dojangs with detailed listings that include:
+                    Our directory features professional dryer vent cleaning services with detailed listings that include:
                   </p>
                   {/* CURATED LIST BULLETS (custom flex row, teal dot, section-matching text color) */}
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="text-gray-600">Location and directions to taekwondo schools near you</span>
+                      <span className="text-gray-600">Location and directions to dryer vent cleaning services near you</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="text-gray-600">Photos, reviews, and student ratings</span>
+                      <span className="text-gray-600">Photos, reviews, and customer ratings</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="text-gray-600">Classes offered and instructor credentials</span>
+                      <span className="text-gray-600">Services offered and technician certifications</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="text-gray-600">Pricing and membership options</span>
+                      <span className="text-gray-600">Pricing and service packages</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
@@ -304,26 +305,26 @@ export default function NearMeClient() {
             {/* Right Column - Why Visit */}
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary-light rounded-lg flex items-center justify-center">
-                  <BadgeQuestionMark className="h-6 w-6 text-primary" />
+                <div className="flex-shrink-0">
+                  <BadgeQuestionMark className="h-12 w-12 text-primary" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-tarawera mb-3">
-                    Why Choose a Taekwondo School?
+                    Why Choose Professional Dryer Vent Cleaning?
                   </h3>
                   <p className="text-gray-600">
-                    Taekwondo offers discipline, self-defense skills, and personal growth for all ages. Learn from certified instructors at your local dojang with flexible class schedules. Many schools also offer programs for kids, teens, and adults.
+                    Professional dryer vent cleaning reduces fire risk, improves energy efficiency, and extends your dryer's lifespan. Find certified technicians in your area with flexible scheduling. Many services offer same-day appointments and emergency service.
                   </p>
                 </div>
               </div>
               {/* Highlight Box */}
-              <div className="bg-primary-light rounded-xl p-6 shadow-sm border border-primary-light">
+              <div className="bg-white rounded-xl p-6 border-2 border-tarawera-200">
                 <div className="flex items-center space-x-3 mb-3">
                   <MapPinIcon className="h-5 w-5 text-primary" />
-                  <h4 className="font-semibold text-tarawera">Pro Tip: Start Your Martial Arts Journey</h4>
+                  <h4 className="font-semibold text-tarawera">Pro Tip: Schedule Regular Maintenance</h4>
                 </div>
                 <p className="text-gray-600 text-sm">
-                  Most taekwondo schools offer a trial class or free introductory lesson. Contact your local dojang to sign up and discover the benefits of martial arts training today.
+                  Most dryer vent cleaning services offer free estimates and inspections. Contact your local service provider to schedule an appointment and ensure your dryer vent is clean and safe.
                 </p>
               </div>
             </div>
@@ -331,17 +332,17 @@ export default function NearMeClient() {
         </div>
       </section>
       {/* Top States Section - match Most Popular States on states page */}
-      <section className="bg-primary-light py-8 pb-16">
+      <section className="bg-primary-light-100 py-8 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white border border-primary-light rounded-full mb-4">
-              <Award className="h-8 w-8 text-primary" />
+              <BrushCleaning className="h-8 w-8 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-tarawera mb-4">
-              Top States with Taekwondo Schools
+              Top States with Dryer Vent Cleaning Services
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore the states with the most taekwondo dojangs in our directory
+              Explore the states with the most dryer vent cleaning services in our directory
             </p>
           </div>
           <TopStatesSection limit={3} />

@@ -14,10 +14,10 @@ export default function Header() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-            <img src="/dojangs.png" alt="Dojangs - Find Taekwondo Schools" className="h-16 w-16" />
+            <img src="/dryerventcleaners.png" alt="Dryer Vent Cleaners - Find Dryer Vent Cleaning Services" className="h-16 w-16" />
             <div>
-              <h2 className="text-xl font-bold text-navy">Dojangs</h2>
-              <p className="text-xs text-navy-700">Find Local Taekwondo Schools</p>
+              <h2 className="text-xl font-bold text-navy">Dryer Vent Cleaners</h2>
+              <p className="text-xs text-navy-700">Find Local Dryer Vent Cleaners</p>
             </div>
           </Link>
 
@@ -34,7 +34,7 @@ export default function Header() {
             >
               Home
             </Link>
-            <Link href="/taekwondo-near-me" className="text-navy hover:text-primary font-medium transition-colors text-sm">
+            <Link href="/dryer-vent-cleaning-near-me" className="text-navy hover:text-primary font-medium transition-colors text-sm">
               Near Me
             </Link>
             <Link
@@ -62,7 +62,7 @@ export default function Header() {
               <Search />
             </div>
             <Link
-              href="/taekwondo-near-me"
+              href="/dryer-vent-cleaning-near-me"
               className="inline-flex items-center justify-center px-3 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors text-sm whitespace-nowrap"
             >
               Near Me

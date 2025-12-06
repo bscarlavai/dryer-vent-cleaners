@@ -5,7 +5,7 @@ import { getSupabaseClient } from '@/lib/supabase'
 import slugify from '@/lib/slugify'
 
 export async function GET() {
-  const baseUrl = 'https://www.dojangs.com'
+  const baseUrl = 'https://www.dryerventcleaners.co'
   const batchSize = 2000; // Match the batch size in sitemap-locations-[batch].xml
 
   try {

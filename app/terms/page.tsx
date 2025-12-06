@@ -4,8 +4,8 @@ import { ArrowLeft } from 'lucide-react'
 import { generateSocialPreview } from '@/components/SocialPreview'
 
 export const metadata: Metadata = generateSocialPreview({
-  title: 'Terms of Service - Dojangs',
-  description: 'Terms of service and usage guidelines for Dojangs.',
+  title: 'Terms of Service - Dryer Vent Cleaners',
+  description: 'Terms of service and usage guidelines for Dryer Vent Cleaners.',
 })
 
 export default function TermsPage() {
@@ -31,11 +31,11 @@ export default function TermsPage() {
               <strong>Effective Date:</strong> January 1, 2025
             </p>
             <p className="text-gray-700 mb-6">
-              Welcome to Dojangs ("we," "our," or "us"). By accessing or using our website, you agree to be bound by the following Terms of Service. If you do not agree to these terms, please do not use our site.
+              Welcome to Dryer Vent Cleaners ("we," "our," or "us"). By accessing or using our website, you agree to be bound by the following Terms of Service. If you do not agree to these terms, please do not use our site.
             </p>
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">1. Use of Our Website</h2>
             <p className="text-gray-700 mb-2">
-              Our website is intended to help users find and explore taekwondo schools across the United States. By using the site, you agree to:
+              Our website is intended to help users find and explore dryer vent cleaning services across the United States. By using the site, you agree to:
             </p>
             <ul className="list-disc pl-6 text-gray-700 mb-2">
               <li>Use the site only for lawful and non-commercial purposes</li>
@@ -67,7 +67,7 @@ export default function TermsPage() {
             </p>
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">5. Intellectual Property</h2>
             <p className="text-gray-700 mb-6">
-              All content on this site—including but not limited to text, design, layout, graphics, and logos—is owned by Dojangs unless otherwise stated. You may not copy, reproduce, distribute, or republish any portion of the site without our prior written permission.
+              All content on this site—including but not limited to text, design, layout, graphics, and logos—is owned by Dryer Vent Cleaners unless otherwise stated. You may not copy, reproduce, distribute, or republish any portion of the site without our prior written permission.
             </p>
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">6. Limitation of Liability</h2>
             <p className="text-gray-700 mb-2">
@@ -95,7 +95,7 @@ export default function TermsPage() {
               If you have any questions about these Terms of Service, please contact us at:
             </p>
             <p className="text-gray-700 mb-6">
-              <span role="img" aria-label="email">📧</span> hello@dojangs.com
+              <span role="img" aria-label="email">📧</span> hello@dryerventcleaners.co
             </p>
           </div>
         </div>

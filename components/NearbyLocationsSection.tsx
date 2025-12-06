@@ -53,7 +53,7 @@ export default function NearbyLocationsSection({ latitude, longitude, currentLoc
     <section className="w-full bg-primary-light py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Taekwondo Schools Near {city}, {state}
+          Dryer Vent Cleaning Services Near {city}, {state}
         </h2>
         {nearbyLocations.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -82,7 +82,7 @@ export default function NearbyLocationsSection({ latitude, longitude, currentLoc
           </div>
         ) : (
           <div className="text-center text-gray-600">
-            <p>No additional schools found nearby.</p>
+            <p>No additional services found nearby.</p>
           </div>
         )}
         {showBackButton && (
@@ -92,7 +92,7 @@ export default function NearbyLocationsSection({ latitude, longitude, currentLoc
               className="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg font-semibold shadow-soft hover:shadow-soft-hover hover:bg-primary/90 transition-all duration-300"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to {state} Taekwondo Schools
+              Back to {state} Dryer Vent Cleaners
             </Link>
           </div>
         )}

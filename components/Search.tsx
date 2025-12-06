@@ -121,7 +121,7 @@ export default function Search() {
           ) : query.length >= 2 ? (
             <div className="px-4 py-3">
               <div className="text-gray-500 mb-2">
-                No taekwondo schools found for "{query}"
+                No dryer vent cleaning services found for "{query}"
               </div>
               <div className="text-sm text-gray-400 space-y-1">
                 <div>• Try searching by city name (e.g., "Miami")</div>
@@ -174,7 +174,7 @@ export function HeroSearch() {
         <div className="flex-1">
           <input
             type="text"
-            placeholder="Search taekwondo schools..."
+            placeholder="Search dryer vent cleaning services..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white text-gray-900"

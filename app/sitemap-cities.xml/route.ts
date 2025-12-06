@@ -4,7 +4,7 @@ import slugify from '@/lib/slugify'
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const baseUrl = 'https://www.dojangs.com'
+  const baseUrl = 'https://www.dryerventcleaners.co'
   
   try {
     const supabase = getSupabaseClient();

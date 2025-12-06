@@ -11,16 +11,16 @@ interface SocialPreviewProps {
 export function generateSocialPreview({
   title,
   description,
-  image = '/dojangs.png', // Default to site logo
-  url = 'https://www.dojangs.com',
+  image = '/dryerventcleaners.png', // Default to site logo
+  url = 'https://www.dryerventcleaners.co',
   type = 'website'
 }: SocialPreviewProps): Metadata {
   // Use provided image or fallback to site logo
-  const imageToUse = image || '/dojangs.png'
+  const imageToUse = image || '/dryerventcleaners.png'
 
   // Ensure image URL is absolute
-  const imageUrl = imageToUse.startsWith('http') ? imageToUse : `https://www.dojangs.com${imageToUse}`
-  
+  const imageUrl = imageToUse.startsWith('http') ? imageToUse : `https://www.dryerventcleaners.co${imageToUse}`
+
   return {
     title,
     description,
@@ -28,7 +28,7 @@ export function generateSocialPreview({
       title,
       description,
       url,
-      siteName: 'Dojangs',
+      siteName: 'Dryer Vent Cleaners',
       images: [
         {
           url: imageUrl,
@@ -44,7 +44,7 @@ export function generateSocialPreview({
       title,
       description,
       images: [imageUrl],
-      creator: '@dojangs', // Optional: your Twitter handle
+      creator: '@dryerventcleaners', // Optional: your Twitter handle
     },
   }
 } 

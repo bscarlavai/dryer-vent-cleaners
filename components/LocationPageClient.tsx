@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { MapPin, Phone, Star, Navigation, Heart, Calendar, Coffee, Wifi, Car, Users, CreditCard, Baby, X, ThumbsUp, Award } from 'lucide-react'
+import { MapPin, Phone, Star, Navigation, Heart, Calendar, Coffee, Wifi, Car, Users, CreditCard, Baby, X, ThumbsUp, BrushCleaning } from 'lucide-react'
 import { getSupabaseClient } from '@/lib/supabase'
 import { LocalBusinessStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData'
 import { formatHours } from '@/lib/timeUtils'
@@ -15,7 +15,8 @@ import HeroSection from '@/components/HeroSection'
 import slugify from '@/lib/slugify'
 import ReportProblemModal from '@/components/ReportProblemModal'
 import LocationHours from '@/components/LocationHours'
-import AdPlacement from '@/components/AdPlacement'
+// DISABLED - Re-enable after domain configuration
+// import AdPlacement from '@/components/AdPlacement'
 
 const NearbyLocationsSection = dynamic(() => import('@/components/NearbyLocationsSection'), { ssr: false })
 
@@ -102,8 +103,8 @@ export default function LocationPageClient({ location: initialLocation, params }
     }
   }
 
-  const htmlSnippet = `<a href="https://www.dojangs.com/states/${params.state}/${params.city}/${params.slug}" target="_blank" rel="noopener noreferrer">
-  <img src="https://www.dojangs.com/dojangs.png" alt="Verified by Dojang Finder" style="height: 64px; width: auto;">
+  const htmlSnippet = `<a href="https://www.dryerventcleaners.co/states/${params.state}/${params.city}/${params.slug}" target="_blank" rel="noopener noreferrer">
+  <img src="https://www.dryerventcleaners.co/dryerventcleaners.png" alt="Verified by Dryer Vent Cleaners" style="height: 64px; width: auto;">
 </a>`
 
   const copyToClipboard = async () => {
@@ -206,11 +207,11 @@ export default function LocationPageClient({ location: initialLocation, params }
 
   // Breadcrumb items for structured data
   const breadcrumbItems = [
-    { name: 'Home', url: 'https://www.dojangs.com' },
-    { name: 'States', url: 'https://www.dojangs.com/states' },
-    { name: location.state, url: `https://www.dojangs.com/states/${params.state}` },
-    { name: location.city, url: `https://www.dojangs.com/states/${params.state}/${params.city}` },
-    { name: location.name, url: `https://www.dojangs.com/states/${params.state}/${params.city}/${params.slug}` }
+    { name: 'Home', url: 'https://www.dryerventcleaners.co' },
+    { name: 'States', url: 'https://www.dryerventcleaners.co/states' },
+    { name: location.state, url: `https://www.dryerventcleaners.co/states/${params.state}` },
+    { name: location.city, url: `https://www.dryerventcleaners.co/states/${params.state}/${params.city}` },
+    { name: location.name, url: `https://www.dryerventcleaners.co/states/${params.state}/${params.city}/${params.slug}` }
   ]
 
   const citySlug = location.city_slug
@@ -253,7 +254,7 @@ export default function LocationPageClient({ location: initialLocation, params }
 
       <HeroSection
         title={<span className="break-words">{location.name}</span>}
-        description={<span>Taekwondo School in {location.city}, {location.state}</span>}
+        description={<span>Dryer Vent Cleaning Service in {location.city}, {location.state}</span>}
         breadcrumbs={
           <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">{breadcrumbs}</div>
         }
@@ -268,7 +269,7 @@ export default function LocationPageClient({ location: initialLocation, params }
               {heroImage ? (
                 <img
                   src={heroImage}
-                  alt={`${location.name} taekwondo school in ${location.city}, ${location.state}`}
+                  alt={`${location.name} dryer vent cleaning service in ${location.city}, ${location.state}`}
                   className="w-full h-full object-cover"
                   loading="eager"
                   width={800}
@@ -279,7 +280,7 @@ export default function LocationPageClient({ location: initialLocation, params }
                   className="w-full h-full flex items-center justify-center"
                   style={{ background: placeholderGradient }}
                 >
-                  <Award className="w-40 h-40 text-white opacity-30" strokeWidth={1.5} />
+                  <BrushCleaning className="w-40 h-40 text-white opacity-30" strokeWidth={1.5} />
                 </div>
               ) : null}
             </div>
@@ -420,7 +421,8 @@ export default function LocationPageClient({ location: initialLocation, params }
       </div>
 
       {/* Ad Placement - After main content, before nearby locations */}
-      <AdPlacement placeholderId={111} />
+      {/* Ad Placement - DISABLED - Re-enable after domain configuration */}
+      {/* <AdPlacement placeholderId={111} /> */}
 
       {/* Report a Problem Link */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
@@ -434,7 +436,7 @@ export default function LocationPageClient({ location: initialLocation, params }
         </p>
       </div>
 
-      {/* Nearby Taekwondo Schools Section - full width */}
+      {/* Nearby Dryer Vent Cleaning Services Section - full width */}
       {location.latitude && location.longitude && (
         <NearbyLocationsSection 
           latitude={location.latitude} 

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { MapPin, Star, Bubbles, Heart } from 'lucide-react'
+import { MapPin, Star, Heart } from 'lucide-react'
 import { generateSocialPreview } from '@/components/SocialPreview'
 import { getStatesWithLocations, getOpen24HourLocationCount } from '@/lib/stateUtils'
 import TopStatesCard from '@/components/TopStatesCard'
@@ -8,14 +8,14 @@ import { getSupabaseClient } from '@/lib/supabase'
 
 export async function generateMetadata(): Promise<Metadata> {
   const social = generateSocialPreview({
-    title: 'Taekwondo Schools by State | Find Dojangs',
-    description: 'Browse taekwondo schools by state. Compare programs, hours, and ratings. Discover the best taekwondo dojangs and martial arts schools across all 50 states.',
-    url: 'https://www.dojangs.com/states',
+    title: 'Dryer Vent Cleaning Services by State | Find Dryer Vent Cleaners',
+    description: 'Browse professional dryer vent cleaning services by state. Compare services, hours, and ratings. Discover certified dryer vent cleaners across all 50 states.',
+    url: 'https://www.dryerventcleaners.co/states',
   })
   return {
     ...social,
     alternates: {
-      canonical: 'https://www.dojangs.com/states',
+      canonical: 'https://www.dryerventcleaners.co/states',
     },
   }
 }
@@ -97,12 +97,12 @@ export default async function StatesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Taekwondo Schools by State
+              Dryer Vent Cleaning Services by State
             </h1>
             <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
-              From California to New York, discover the best taekwondo schools across all 50 states.
-              Whether you're looking for kids classes, adult programs, or competitive training,
-              we've got you covered with curated taekwondo dojangs nationwide.
+              From California to New York, find professional dryer vent cleaning services across all 50 states.
+              Whether you need residential service, commercial cleaning, or emergency appointments,
+              we've got you covered with certified dryer vent cleaners nationwide.
             </p>
           </div>
         </div>
@@ -114,11 +114,11 @@ export default async function StatesPage() {
           <div className="bg-white rounded-2xl shadow-xl py-8 px-4 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center border border-gray-100">
             <div>
               <div className="text-4xl font-bold text-tarawera mb-2">{stats.totalLocations}</div>
-              <div className="text-gray-600">Taekwondo Schools Nationwide</div>
+              <div className="text-gray-600">Dryer Vent Cleaners Nationwide</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-primary mb-2">{stats.open24HoursCount}</div>
-              <div className="text-gray-600">24-Hour Access</div>
+              <div className="text-gray-600">24-Hour Service Available</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-yellow-500 mb-2">{stats.highRatedCount}</div>
@@ -133,7 +133,7 @@ export default async function StatesPage() {
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              All States with Taekwondo Schools
+              All States with Dryer Vent Cleaning Services
             </h2>
             {/* Quick Navigation */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-primary-light-200">
@@ -173,9 +173,9 @@ export default async function StatesPage() {
                         </div>
                         <div className="text-center w-full">
                           <div className="text-2xl font-bold text-tarawera mb-1">{state.locationCount}</div>
-                          <div className="text-sm text-manatee mb-3">{state.locationCount === 1 ? 'Taekwondo School' : 'Taekwondo Schools'}</div>
+                          <div className="text-sm text-manatee mb-3">{state.locationCount === 1 ? 'Dryer Vent Cleaner' : 'Dryer Vent Cleaners'}</div>
                           <div className="bg-tarawera text-white w-full px-4 py-2 rounded-lg font-medium hover:bg-tarawera-200 transition-colors">
-                            Explore Schools →
+                            Explore Services →
                           </div>
                         </div>
                       </Link>
@@ -200,7 +200,7 @@ export default async function StatesPage() {
                 Most Popular States
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Explore the states with the most taekwondo schools in our directory
+                Explore the states with the most dryer vent cleaning services in our directory
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -222,8 +222,8 @@ export default async function StatesPage() {
         <div className="text-center py-12">
           <div className="bg-primary-light-100 rounded-lg shadow-md p-8 max-w-md mx-auto border border-primary-light-200">
             <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No taekwondo schools found</h3>
-            <p className="text-gray-600">Check back soon as we're constantly adding new locations!</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No dryer vent cleaning services found</h3>
+            <p className="text-gray-600">Check back soon as we're constantly adding new service providers!</p>
           </div>
         </div>
       )}

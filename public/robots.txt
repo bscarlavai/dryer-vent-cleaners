@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://www.dojangs.com/sitemap.xml
+Sitemap: https://www.dryerventcleaners.co/sitemap.xml
 
 # Crawl delay for respectful crawling
 Crawl-delay: 1

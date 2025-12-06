@@ -25,9 +25,9 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
 // Website structured data for homepage
 export function WebsiteStructuredData() {
   const data = {
-    name: 'Dojangs',
-    description: 'Discover the best taekwondo schools across the United States. Find taekwondo schools, martial arts dojangs, and taekwondo training locations near you.',
-    url: 'https://www.dojangs.com'
+    name: 'Dryer Vent Cleaners',
+    description: 'Discover professional dryer vent cleaning services across the United States. Find certified dryer vent cleaners, residential and commercial services near you.',
+    url: 'https://www.dryerventcleaners.co'
   }
 
   return <StructuredData type="website" data={data} />
@@ -36,16 +36,16 @@ export function WebsiteStructuredData() {
 // Organization structured data
 export function OrganizationStructuredData() {
   const data = {
-    url: 'https://www.dojangs.com',
-    logo: 'https://www.dojangs.com/logo.png',
+    url: 'https://www.dryerventcleaners.co',
+    logo: 'https://www.dryerventcleaners.co/logo.png',
     sameAs: [
-      'https://twitter.com/dojangs',
-      'https://facebook.com/dojangs'
+      'https://twitter.com/dryerventcleaners',
+      'https://facebook.com/dryerventcleaners'
     ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'hello@dojangs.com'
+      email: 'hello@dryerventcleaners.co'
     }
   }
 

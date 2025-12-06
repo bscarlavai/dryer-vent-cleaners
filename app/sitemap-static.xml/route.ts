@@ -4,13 +4,13 @@ import slugify from '@/lib/slugify'
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const baseUrl = 'https://www.dojangs.com'
+  const baseUrl = 'https://www.dryerventcleaners.co'
 
   try {
     // Static pages
     const staticPages = [
       '',
-      '/taekwondo-near-me',
+      '/dryer-vent-cleaning-near-me',
       '/states',
       '/privacy',
       '/terms',

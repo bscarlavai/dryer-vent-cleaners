@@ -60,9 +60,9 @@ export default function ReportProblemModal({ isOpen, onClose, locationId, isGlob
         </div>
         <form onSubmit={handleFeedbackSubmit} className="px-6 py-6 max-h-[70vh] overflow-y-auto space-y-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-            <strong>Note:</strong> {isGlobal 
-              ? "If you want to leave a review for a specific car wash, please visit that location's page and use the \"Leave Review\" button."
-              : "If you want to leave a review for this car wash, please use the \"Leave Review\" button."
+            <strong>Note:</strong> {isGlobal
+              ? "If you want to leave a review for a specific dryer vent cleaning service, please visit that location's page and use the \"Leave Review\" button."
+              : "If you want to leave a review for this dryer vent cleaning service, please use the \"Leave Review\" button."
             }
           </div>
           <div>

@@ -21,31 +21,31 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       const image = firstLocation && firstLocation.photo_url ? firstLocation.photo_url : null
       
       const social = generateSocialPreview({
-        title: `Taekwondo Schools Near ${zip} | Dojangs`,
-        description: `Explore taekwondo schools and dojangs near ${zip}. Get directions, hours, and contact details for local taekwondo classes.`,
+        title: `Dryer Vent Cleaning Near ${zip} | Dryer Vent Cleaners`,
+        description: `Find professional dryer vent cleaning services near ${zip}. Get directions, hours, and contact details for local dryer vent cleaners.`,
         image,
-        url: `https://www.dojangs.com/self-service-car-wash-near-me?zip=${zip}`,
+        url: `https://www.dryerventcleaners.co/dryer-vent-cleaning-near-me?zip=${zip}`,
       })
       return {
         ...social,
         alternates: {
-          canonical: `https://www.dojangs.com/self-service-car-wash-near-me?zip=${zip}`,
+          canonical: `https://www.dryerventcleaners.co/dryer-vent-cleaning-near-me?zip=${zip}`,
         },
       }
     } catch (error) {
       // Fallback to default metadata
     }
   }
-  // Default metadata for taekwondo-near-me page
+  // Default metadata for dryer-vent-cleaning-near-me page
   const social = generateSocialPreview({
-    title: 'Taekwondo Near Me | Find Taekwondo Classes Near Me',
-    description: 'Explore taekwondo schools and dojangs in your area. Compare amenities, hours, and ratings. Find top-rated taekwondo classes open near you.',
-    url: 'https://www.dojangs.com/self-service-car-wash-near-me',
+    title: 'Dryer Vent Cleaning Near Me | Find Local Dryer Vent Cleaners',
+    description: 'Find professional dryer vent cleaning services in your area. Compare services, hours, and ratings. Find top-rated dryer vent cleaners near you.',
+    url: 'https://www.dryerventcleaners.co/dryer-vent-cleaning-near-me',
   })
   return {
     ...social,
     alternates: {
-      canonical: 'https://www.dojangs.com/self-service-car-wash-near-me',
+      canonical: 'https://www.dryerventcleaners.co/dryer-vent-cleaning-near-me',
     },
   }
 }

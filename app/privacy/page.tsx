@@ -4,8 +4,8 @@ import { ArrowLeft } from 'lucide-react'
 import { generateSocialPreview } from '@/components/SocialPreview'
 
 export const metadata: Metadata = generateSocialPreview({
-  title: 'Privacy Policy - Dojangs',
-  description: 'Learn how Dojangs protects your privacy and handles your data.',
+  title: 'Privacy Policy - Dryer Vent Cleaners',
+  description: 'Learn how Dryer Vent Cleaners protects your privacy and handles your data.',
 })
 
 export default function PrivacyPage() {
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
               <strong>Effective Date:</strong> January 1, 2025
             </p>
             <p className="text-gray-700 mb-6">
-              Welcome to Dojangs ("we," "our," or "us"). By using our website, you agree to be bound by this Privacy Policy. If you do not agree to this policy, please do not use our site.
+              Welcome to Dryer Vent Cleaners ("we," "our," or "us"). By using our website, you agree to be bound by this Privacy Policy. If you do not agree to this policy, please do not use our site.
             </p>
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">1. Information We Collect</h2>
             <p className="text-gray-700 mb-2">
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
               <li>Decline to provide an email address or other identifying information when submitting content</li>
             </ul>
             <p className="text-gray-700 mb-6">
-              To make a request, email us at hello@dojangs.com.
+              To make a request, email us at hello@dryerventcleaners.co.
             </p>
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">8. Third-Party Services</h2>
             <p className="text-gray-700 mb-6">
@@ -143,7 +143,7 @@ export default function PrivacyPage() {
               If you have questions or requests related to this Privacy Policy, please contact us at:
             </p>
             <p className="text-gray-700 mb-6">
-              <span role="img" aria-label="email">📧</span> hello@dojangs.com
+              <span role="img" aria-label="email">📧</span> hello@dryerventcleaners.co
             </p>
           </div>
         </div>

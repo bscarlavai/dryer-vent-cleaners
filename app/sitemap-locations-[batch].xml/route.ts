@@ -4,7 +4,7 @@ import slugify from '@/lib/slugify'
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
-  const baseUrl = 'https://www.dojangs.com'
+  const baseUrl = 'https://www.dryerventcleaners.co'
   const batchSize = 2000; // Reduced from 5000 to prevent memory issues
   // Get batch number from query param
   const url = new URL(req.url);

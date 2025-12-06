@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Next.js 14 directory application for finding Taekwondo schools and dojangs across the United States, deployed on Cloudflare Pages using OpenNext. The site uses Supabase for data storage and features state/city-based navigation with SEO optimization.
+A Next.js 14 directory application for finding dryer vent cleaning services across the United States, deployed on Cloudflare Pages using OpenNext. The site uses Supabase for data storage and features state/city-based navigation with SEO optimization.
 
 ## Development Commands
 
@@ -50,7 +50,7 @@ The app uses Next.js 14 App Router with the following URL patterns:
 - `/states/[state]/[city]/[slug]` - Individual location detail page
 - `/cities/[city]` - City page (cross-state aggregation)
 - `/search` - Search results page
-- `/taekwondo-near-me` - Location-based search
+- `/dryer-vent-cleaning-near-me` - Location-based search
 - `/admin/login` - Admin authentication
 - `/admin/locations-review` - Admin location approval queue
 
@@ -119,10 +119,10 @@ The app uses Next.js 14 App Router with the following URL patterns:
 3. Wrangler deploys from `.open-next/worker.js`
 
 **Configuration Files:**
-- `wrangler.jsonc` - Cloudflare Worker configuration (worker name: "dojangs")
+- `wrangler.jsonc` - Cloudflare Worker configuration (worker name: "dryer-vent-cleaners")
 - `next.config.js` - Next.js build settings
 - `open-next.config.ts` - OpenNext adapter settings
-- `package.json` - Project name: "dojangs"
+- `package.json` - Project name: "dryer-vent-cleaners"
 
 **Environment Variables:**
 - Development: `.env.local` file
@@ -202,4 +202,4 @@ npm test -- timeUtils.test.ts
 - Workers use Node.js compatibility mode (`nodejs_compat` flag)
 - Global fetch restricted to public URLs only
 - No CPU limits on free plan (limits were removed)
-- Worker name must match in wrangler.jsonc services binding ("dojangs")
+- Worker name must match in wrangler.jsonc services binding ("dryer-vent-cleaners")

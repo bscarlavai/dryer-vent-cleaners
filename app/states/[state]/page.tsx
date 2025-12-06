@@ -65,16 +65,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const stateName = firstLocation ? firstLocation.state : params.state;
 
   const social = generateSocialPreview({
-    title: `${stateName} Taekwondo`,
-    description: `Explore taekwondo schools in ${stateName}. Find locations, hours, reviews, and more.`,
+    title: `${stateName} Dryer Vent Cleaning`,
+    description: `Find professional dryer vent cleaning services in ${stateName}. Compare locations, hours, reviews, and more.`,
     image,
-    url: `https://www.dojangs.com/states/${params.state}`,
+    url: `https://www.dryerventcleaners.co/states/${params.state}`,
   })
 
   return {
     ...social,
     alternates: {
-      canonical: `https://www.dojangs.com/states/${params.state}`,
+      canonical: `https://www.dryerventcleaners.co/states/${params.state}`,
     },
   }
 }
@@ -132,8 +132,8 @@ export default async function StatePage({ params }: PageProps) {
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Hero Section - full-width, no card, with breadcrumbs inside */}
       <HeroSection
-        title={`Taekwondo Schools in ${stateName}`}
-        description={`Explore ${totalLocations} convenient taekwondo schools across ${stateName} - from neighborhood dojangs to city locations. Whether you're a local looking for your regular dojang or a visitor seeking training, discover where you can train with professional instructors in the ${stateName} taekwondo scene.`}
+        title={`Dryer Vent Cleaning Services in ${stateName}`}
+        description={`Explore ${totalLocations} professional dryer vent cleaning services across ${stateName} - from residential to commercial specialists. Whether you need routine maintenance or emergency service, find certified cleaners who can keep your home safe and your dryer running efficiently.`}
         breadcrumbs={
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
@@ -163,26 +163,26 @@ export default async function StatePage({ params }: PageProps) {
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Statewide Coverage</h3>
               <p className="text-gray-600">
                 {otherCitiesCount > 0
-                  ? `Check out taekwondo schools in ${topCities} and ${otherCitiesCount} other cities — your next dojang in ${stateName} might be here!`
-                  : `Check out taekwondo schools in ${topCities} — your next dojang in ${stateName} might be here!`}
+                  ? `Check out dryer vent cleaning services in ${topCities} and ${otherCitiesCount} other cities — find your local cleaner in ${stateName}!`
+                  : `Check out dryer vent cleaning services in ${topCities} — find your local cleaner in ${stateName}!`}
               </p>
             </div>
             <div>
               <div className="bg-primary/10 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <Heart className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Curated Listings</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Verified Listings</h3>
               <p className="text-gray-600">
-                All {totalLocations} taekwondo schools have been curated with accurate contact info, hours, and current business details.
+                All {totalLocations} dryer vent cleaning services have been verified with accurate contact info, hours, and service details.
               </p>
             </div>
             <div>
               <div className="bg-tarawera/10 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <Coffee className="h-8 w-8 text-tarawera" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Professional Instructors</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Certified Professionals</h3>
               <p className="text-gray-600">
-                Whether you're looking to train regularly or occasionally, find your perfect taekwondo school.
+                Whether you need routine maintenance or emergency service, find the right dryer vent cleaner for your needs.
               </p>
             </div>
           </div>

@@ -5,7 +5,8 @@ import { notFound } from 'next/navigation'
 import { generateSocialPreview } from '@/components/SocialPreview'
 import LocationCard from '@/components/LocationCard'
 import { searchLocationsByZip } from '@/lib/locationUtils'
-import AdPlacement from '@/components/AdPlacement'
+// DISABLED - Re-enable after domain configuration
+// import AdPlacement from '@/components/AdPlacement'
 
 interface PageProps {
   searchParams: {
@@ -16,13 +17,13 @@ interface PageProps {
 
 export async function generateMetadata(): Promise<Metadata> {
   const social = generateSocialPreview({
-    title: 'Search Results | Dojangs.com',
-    description: 'Search for taekwondo schools by name, city, or state. Compare amenities, hours, and ratings.',
+    title: 'Search Results | Dryer Vent Cleaners',
+    description: 'Search for dryer vent cleaning services by name, city, or state. Compare services, hours, and ratings.',
   })
   return {
     ...social,
     alternates: {
-      canonical: 'https://www.dojangs.com/search',
+      canonical: 'https://www.dryerventcleaners.co/search',
     },
   }
 }
@@ -93,10 +94,10 @@ export default async function SearchPage({ searchParams }: PageProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Search Taekwondo Schools
+                Search Dryer Vent Cleaning Services
               </h1>
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                Find taekwondo schools by name, city, state, or zip code. Compare amenities, hours, and ratings to discover the best dojangs.
+                Find dryer vent cleaning services by name, city, state, or zip code. Compare services, hours, and ratings to find certified cleaners.
               </p>
             </div>
           </div>
@@ -133,8 +134,8 @@ export default async function SearchPage({ searchParams }: PageProps) {
           <div className="mb-8">
             <p className="text-lg text-gray-600 text-center">
               {locations.length > 0
-                ? `Found ${locations.length} taekwondo school${locations.length === 1 ? '' : 's'} for "${searchTerm}"`
-                : `No taekwondo schools found for "${searchTerm}"`}
+                ? `Found ${locations.length} dryer vent cleaning service${locations.length === 1 ? '' : 's'} for "${searchTerm}"`
+                : `No dryer vent cleaning services found for "${searchTerm}"`}
             </p>
           </div>
           {locations.length > 0 ? (
@@ -163,16 +164,17 @@ export default async function SearchPage({ searchParams }: PageProps) {
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="text-gray-500 text-lg mb-2">No taekwondo schools found</div>
+              <div className="text-gray-500 text-lg mb-2">No dryer vent cleaning services found</div>
               <p className="text-gray-600">
-                We couldn't find any taekwondo schools matching "{searchTerm}". Try searching with different terms or browse by state.
+                We couldn't find any dryer vent cleaning services matching "{searchTerm}". Try searching with different terms or browse by state.
               </p>
             </div>
           )}
         </section>
 
         {/* Ad Placement - After search results */}
-        <AdPlacement placeholderId={112} />
+        {/* Ad Placement - DISABLED - Re-enable after domain configuration */}
+        {/* <AdPlacement placeholderId={112} /> */}
       </div>
       {/* How to Search Effectively Section */}
       <section className="bg-primary-light-100 py-8 pb-16">
@@ -180,7 +182,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-tarawera mb-4">How to Get the Most Out of Your Search</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-              Find the perfect taekwondo school by searching for a city, zip code, or dojang name.
+              Find the perfect dryer vent cleaning service by searching for a city, zip code, or service provider name.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -190,7 +192,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Search by Location</h3>
               <p className="text-gray-600 text-base">
-                Enter a city, state name, or zip code to find taekwondo schools in that area.
+                Enter a city, state name, or zip code to find dryer vent cleaning services in that area.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -199,7 +201,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Search by Name or Feature</h3>
               <p className="text-gray-600 text-base">
-                Search for specific dojang names, keywords, or features—like "taekwondo", "martial arts", "kids classes", or "adult programs"—to find locations that match your needs.
+                Search for specific service provider names, keywords, or features—like "dryer vent cleaning", "residential", "commercial", or "same-day service"—to find locations that match your needs.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">

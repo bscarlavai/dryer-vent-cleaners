@@ -13,15 +13,16 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  async redirects() {
-    return [
-      {
-        source: '/ads.txt',
-        destination: 'https://srv.adstxtmanager.com/19390/dojangs.com',
-        permanent: true, // 301 redirect
-      },
-    ]
-  },
+  // DISABLED - Re-enable after domain configuration
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/ads.txt',
+  //       destination: 'https://srv.adstxtmanager.com/19390/dryerventcleaners.co',
+  //       permanent: true, // 301 redirect
+  //     },
+  //   ]
+  // },
   async headers() {
     return [
       {

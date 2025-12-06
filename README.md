@@ -1,12 +1,12 @@
-# Dojangs 🥋
+# Dryer Vent Cleaners
 
-A comprehensive directory of Taekwondo schools and dojangs across the United States, built with Next.js and deployed on Cloudflare Pages.
+A comprehensive directory of dryer vent cleaning services across the United States, built with Next.js and deployed on Cloudflare Pages.
 
 ## Features
 
-- **State-by-State Directory**: Browse Taekwondo schools organized by state
-- **City Pages**: Detailed listings for each city with dojangs
-- **Individual School Pages**: Comprehensive information for each Taekwondo school
+- **State-by-State Directory**: Browse dryer vent cleaning services organized by state
+- **City Pages**: Detailed listings for each city with services
+- **Individual Service Pages**: Comprehensive information for each dryer vent cleaning service
 - **SEO Optimized**: Built with Next.js SEO best practices
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile
 - **Fast Performance**: Optimized for speed and user experience
@@ -32,7 +32,7 @@ A comprehensive directory of Taekwondo schools and dojangs across the United Sta
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd dojangs
+cd dryer-vent-cleaners
 ```
 
 2. Install dependencies:
@@ -55,7 +55,7 @@ Open [http://localhost:3003](http://localhost:3003) to view the application.
 ## Project Structure
 
 ```
-dojangs/
+dryer-vent-cleaners/
 ├── app/                    # Next.js App Router pages
 │   ├── globals.css        # Global styles
 │   ├── layout.tsx         # Root layout

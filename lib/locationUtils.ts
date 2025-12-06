@@ -20,7 +20,7 @@ export async function getCoordinatesFromZip(zipCode: string): Promise<{latitude:
   try {
     const fetchOptions: RequestInit & { cf?: any } = {
       headers: {
-        'User-Agent': 'SelfCarWashFinder/1.0',
+        'User-Agent': 'DryerVentCleaners/1.0',
       },
     };
 

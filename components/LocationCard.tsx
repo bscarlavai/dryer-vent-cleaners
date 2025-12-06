@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MapPin, Star, ArrowRight, Phone, Globe, Award } from 'lucide-react';
+import { MapPin, Star, ArrowRight, Phone, Globe, BrushCleaning } from 'lucide-react';
 import { getLocationImageUrl, generatePlaceholderGradient, type LocationImage } from '@/lib/imageUtils';
 import { isBusinessOpen } from '@/lib/timeUtils';
 import React from 'react';
@@ -92,7 +92,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
           <>
             <img
               src={shopImage}
-              alt={`${name} taekwondo school in ${city}, ${state}`}
+              alt={`${name} dryer vent cleaning service in ${city}, ${state}`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
             />
@@ -103,7 +103,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
             className="w-full h-full flex items-center justify-center"
             style={{ background: placeholderGradient }}
           >
-            <Award className="w-24 h-24 text-white opacity-40" strokeWidth={1.5} />
+            <BrushCleaning className="w-24 h-24 text-white opacity-40" strokeWidth={1.5} />
           </div>
         ) : null}
       </div>

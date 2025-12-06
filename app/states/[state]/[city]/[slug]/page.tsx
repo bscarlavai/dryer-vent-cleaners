@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!location) {
     return generateSocialPreview({
-      title: 'Taekwondo School Not Found',
-      description: 'The requested taekwondo school could not be found.',
+      title: 'Dryer Vent Cleaning Service Not Found',
+      description: 'The requested dryer vent cleaning service could not be found.',
     })
   }
 
@@ -33,17 +33,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   )
 
   const social = generateSocialPreview({
-    title: `${location.name} - ${location.city} Taekwondo School`,
-    description: `${location.name} taekwondo school in ${location.city}, ${location.state}. Get the location's hours, reviews, amenities, directions, and contact information.`,
+    title: `${location.name} - ${location.city} Dryer Vent Cleaning Service`,
+    description: `${location.name} dryer vent cleaning service in ${location.city}, ${location.state}. Get the location's hours, reviews, amenities, directions, and contact information.`,
     image: imageUrl,
-    url: `https://www.dojangs.com/states/${params.state}/${params.city}/${params.slug}`,
+    url: `https://www.dryerventcleaners.co/states/${params.state}/${params.city}/${params.slug}`,
     type: 'article',
   })
 
   return {
     ...social,
     alternates: {
-      canonical: `https://www.dojangs.com/states/${params.state}/${params.city}/${params.slug}`,
+      canonical: `https://www.dryerventcleaners.co/states/${params.state}/${params.city}/${params.slug}`,
     },
   }
 }
@@ -66,10 +66,10 @@ export default async function LocationPage({ params }: PageProps) {
               <MapPin className="h-8 w-8 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              More Taekwondo Schools in {location.state}
+              More Dryer Vent Cleaning Services in {location.state}
             </h2>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Discover other amazing taekwondo schools and dojangs in {location.state}
+              Discover other amazing dryer vent cleaning services and services in {location.state}
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center mt-8">
               <a
@@ -77,7 +77,7 @@ export default async function LocationPage({ params }: PageProps) {
                 className="inline-flex items-center justify-center bg-tarawera text-white px-8 py-4 rounded-lg font-semibold shadow-soft hover:shadow-soft-hover hover:bg-primary transition-all duration-300 w-full md:w-auto"
               >
                 <MapPin className="h-5 w-5 mr-2" />
-                Browse All Dojangs in {location.state}
+                Browse All Dryer Vent Cleaners in {location.state}
               </a>
               <a
                 href="/states"

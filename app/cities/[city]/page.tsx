@@ -10,7 +10,8 @@ import { getSupabaseClient } from '@/lib/supabase'
 import NearbyLocationsSection from '@/components/NearbyLocationsSection';
 import { LocalBusinessStructuredData } from '@/components/StructuredData'
 import HeroSection from '@/components/HeroSection';
-import AdPlacement from '@/components/AdPlacement';
+// DISABLED - Re-enable after domain configuration
+// import AdPlacement from '@/components/AdPlacement';
 
 interface PageProps {
   params: {
@@ -25,16 +26,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const image = firstLocation && firstLocation.photo_url ? firstLocation.photo_url : null
 
   const social = generateSocialPreview({
-    title: `${cityName} Taekwondo`,
-    description: `Discover taekwondo schools and dojangs in ${cityName}. Find the perfect taekwondo school.`,
+    title: `${cityName} Dryer Vent Cleaning`,
+    description: `Discover professional dryer vent cleaning services in ${cityName}. Find certified cleaners near you.`,
     image,
-    url: `https://www.dojangs.com/cities/${params.city}`,
+    url: `https://www.dryerventcleaners.co/cities/${params.city}`,
   })
 
   return {
     ...social,
     alternates: {
-      canonical: `https://www.dojangs.com/cities/${params.city}`,
+      canonical: `https://www.dryerventcleaners.co/cities/${params.city}`,
     },
   }
 }
@@ -221,10 +222,10 @@ export default async function CityPage({ params }: PageProps) {
               <MapPin className="h-8 w-8 text-red-600" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              No Taekwondo Schools Found
+              No Dryer Vent Cleaning Services Found
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              We couldn't find any taekwondo schools in "{parsedCitySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}"{stateName ? `, ${stateName}` : ''}.
+              We couldn't find any dryer vent cleaning services in "{parsedCitySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}"{stateName ? `, ${stateName}` : ''}.
             </p>
             
             {similarCities.length > 0 && (
@@ -278,18 +279,18 @@ export default async function CityPage({ params }: PageProps) {
 
   // Breadcrumb items for structured data
   const breadcrumbItems = [
-    { name: 'Home', url: 'https://www.dojangs.com/' },
-    { name: 'States', url: 'https://www.dojangs.com/states' },
-    { name: state, url: `https://www.dojangs.com/states/${state.toLowerCase().replace(/\s+/g, '-')}` },
-    { name: cityName, url: `https://www.dojangs.com/cities/${citySlug}` }
+    { name: 'Home', url: 'https://www.dryerventcleaners.co/' },
+    { name: 'States', url: 'https://www.dryerventcleaners.co/states' },
+    { name: state, url: `https://www.dryerventcleaners.co/states/${state.toLowerCase().replace(/\s+/g, '-')}` },
+    { name: cityName, url: `https://www.dryerventcleaners.co/cities/${citySlug}` }
   ]
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Hero Section - full-width, no card, with breadcrumbs inside */}
       <HeroSection
-        title={`Taekwondo Schools in ${cityName}`}
-        description={`Explore ${locations.length} taekwondo schools in ${cityName}${state ? ", " + state : ""}. Whether you're a local or a visitor, discover where you can train in taekwondo with professional instruction in ${cityName}.`}
+        title={`Dryer Vent Cleaning Services in ${cityName}`}
+        description={`Explore ${locations.length} professional dryer vent cleaning services in ${cityName}${state ? ", " + state : ""}. Whether you need routine maintenance or emergency service, find certified cleaners to keep your home safe in ${cityName}.`}
         breadcrumbs={
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
@@ -315,8 +316,8 @@ export default async function CityPage({ params }: PageProps) {
         }
       />
       <LocalBusinessStructuredData location={{
-        name: `Taekwondo Schools in ${cityName}`,
-        description: `Find the best taekwondo schools in ${cityName}, ${state}. Discover ${locations.length} taekwondo schools.`,
+        name: `Dryer Vent Cleaning Services in ${cityName}`,
+        description: `Find professional dryer vent cleaning services in ${cityName}, ${state}. Discover ${locations.length} certified cleaners.`,
         city: cityName,
         state: state,
         latitude: cityLat,
@@ -334,25 +335,25 @@ export default async function CityPage({ params }: PageProps) {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Citywide Coverage</h3>
                 <p className="text-gray-600">
-                  Find taekwondo schools throughout {cityName}—your next dojang might be just around the corner!
+                  Find dryer vent cleaning services throughout {cityName}—professional cleaners might be just around the corner!
                 </p>
               </div>
               <div>
                 <div className="bg-primary/10 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Heart className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Curated Listings</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Verified Listings</h3>
                 <p className="text-gray-600">
-                  All {locations.length} taekwondo schools have been curated with accurate contact info, hours, and current business details.
+                  All {locations.length} dryer vent cleaning services have been verified with accurate contact info, hours, and service details.
                 </p>
               </div>
               <div>
                 <div className="bg-tarawera/10 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Coffee className="h-8 w-8 text-tarawera" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Professional Instruction</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Certified Professionals</h3>
                 <p className="text-gray-600">
-                  Whether you want beginner classes or advanced training, find your perfect taekwondo school in {cityName}.
+                  Whether you need routine maintenance or emergency service, find the right dryer vent cleaner in {cityName}.
                 </p>
               </div>
             </div>
@@ -362,7 +363,7 @@ export default async function CityPage({ params }: PageProps) {
         {/* Locations Grid */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Taekwondo Schools in {cityName}
+            Dryer Vent Cleaning Services in {cityName}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {locations.map((location) => (
@@ -390,10 +391,10 @@ export default async function CityPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Ad Placement - Between locations grid and nearby section */}
-      <AdPlacement placeholderId={113} />
+      {/* Ad Placement - DISABLED - Re-enable after domain configuration */}
+      {/* <AdPlacement placeholderId={113} /> */}
 
-      {/* Taekwondo Schools Near [City] Section - full width */}
+      {/* Dryer Vent Cleaning Services Near [City] Section - full width */}
       <NearbyLocationsSection
         latitude={cityLat}
         longitude={cityLng}

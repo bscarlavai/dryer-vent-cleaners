@@ -26,7 +26,7 @@ export default function TopStatesCard({ name, count, rank, href }: TopStatesCard
             </h3>
             <div className="flex items-center text-sm text-manatee">
               <Star className="h-4 w-4 text-yellow-400 mr-1 fill-current" />
-              <span>#{rank} Most Schools</span>
+              <span>#{rank} Most Services</span>
             </div>
           </div>
         </div>
@@ -36,10 +36,10 @@ export default function TopStatesCard({ name, count, rank, href }: TopStatesCard
           {count}
         </div>
         <div className="text-sm text-manatee mb-4">
-          {count === 1 ? 'Taekwondo School' : 'Taekwondo Schools'}
+          {count === 1 ? 'Dryer Vent Cleaner' : 'Dryer Vent Cleaners'}
         </div>
         <div className="bg-tarawera text-white px-4 py-2 rounded-lg font-medium hover:bg-tarawera-200 transition-colors">
-          Explore Schools →
+          Explore Services →
         </div>
       </div>
     </Link>
