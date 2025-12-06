@@ -32,7 +32,9 @@
   "env": {
     "production": {
       "vars": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "NEXT_PUBLIC_SUPABASE_URL": "https://qzxfyvmkobbtpjtzeymr.supabase.co",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6eGZ5dm1rb2JidHBqdHpleW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzODI3NTAsImV4cCI6MjA0OTk1ODc1MH0.M_L1DfT3q89eZBSKNaKBWyRLNs-rQ6ZEMDRUy1H9OFo"
       }
     }
   }
