@@ -153,3 +153,10 @@ pnpm-lock.yaml
 
 # OpenNext build output
 .open-next 
+
+# Data files
+serpapi_data/
+serpapi_data_imported/
+
+# Favicon files
+public/favicon_io/

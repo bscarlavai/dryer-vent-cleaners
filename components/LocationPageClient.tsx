@@ -299,15 +299,27 @@ export default function LocationPageClient({ location: initialLocation, params }
                       </div>
                     )}
                   </div>
-                  {location.street_address && (
-                    <div className="flex items-start mb-2">
-                      <MapPin className="h-5 w-5 mr-3 text-gray-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-gray-900">{location.street_address.split(',')[0]}</p>
-                        <p className="text-gray-600">{location.city}, {location.state} {location.postal_code}</p>
+                  {location.street_address && (() => {
+                    // Extract street part by removing city, state, zip from street_address
+                    const streetPart = location.street_address.split(',')[0]?.trim();
+                    // Check if the street part is meaningful (not just city name or state)
+                    const hasRealStreetAddress = streetPart &&
+                      streetPart.toLowerCase() !== location.city?.toLowerCase() &&
+                      streetPart.toLowerCase() !== location.state?.toLowerCase() &&
+                      streetPart.length > 0;
+
+                    return (
+                      <div className="flex items-start mb-2">
+                        <MapPin className="h-5 w-5 mr-3 text-gray-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          {hasRealStreetAddress && (
+                            <p className="text-gray-900">{streetPart}</p>
+                          )}
+                          <p className="text-gray-600">{location.city}, {location.state} {location.postal_code}</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                   
                   <LocationHours location={location} />
                   

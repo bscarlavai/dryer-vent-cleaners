@@ -3,10 +3,10 @@
  *
  * This script:
  * 1. Fetches locations with serp_payload from database
- * 2. Extracts photos_link from serp_payload
- * 3. Calls SerpAPI photos endpoint to get all photos
- * 4. Uploads photos to Cloudflare Images
- * 5. Stores image references in location_images table
+ * 2. Extracts thumbnail URL from serp_payload (no additional API calls!)
+ * 3. Downloads the thumbnail image
+ * 4. Uploads to Cloudflare Images
+ * 5. Stores image reference in location_images table
  *
  * Usage:
  *   # Test with first 2 locations
@@ -17,9 +17,6 @@
  *
  *   # Start from specific location
  *   node scripts/migrate_serpapi_photos.js --start-after <location-id>
- *
- *   # Limit photos per location
- *   node scripts/migrate_serpapi_photos.js --max-photos 5
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -28,7 +25,6 @@ const fs = require('fs');
 require('dotenv').config({ path: '.env.local' });
 
 // Configuration
-const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY;
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const CLOUDFLARE_IMAGES_API_TOKEN = process.env.CLOUDFLARE_IMAGES_API_TOKEN;
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -40,19 +36,11 @@ const limitIndex = args.indexOf('--limit');
 const LIMIT = limitIndex !== -1 ? parseInt(args[limitIndex + 1]) : null;
 const startAfterIndex = args.indexOf('--start-after');
 const START_AFTER = startAfterIndex !== -1 ? args[startAfterIndex + 1] : null;
-const maxPhotosIndex = args.indexOf('--max-photos');
-const MAX_PHOTOS_PER_LOCATION = maxPhotosIndex !== -1 ? parseInt(args[maxPhotosIndex + 1]) : 10;
 
-const BATCH_SIZE = 3; // Process 3 locations at a time (conservative due to API limits)
-const DELAY_MS = 3000; // 3 second delay between batches to avoid rate limits
-const PHOTO_DELAY_MS = 1000; // 1 second delay between photos
+const BATCH_SIZE = 10; // Process 10 locations at a time (increased since no API rate limits)
+const DELAY_MS = 1000; // 1 second delay between batches
 
-// Validate environment variables
-if (!SERPAPI_API_KEY) {
-  console.error('❌ Missing SERPAPI_API_KEY!');
-  console.error('Please set in .env.local');
-  process.exit(1);
-}
+// Validate environment variables (no SerpAPI key needed!)
 
 if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_IMAGES_API_TOKEN) {
   console.error('❌ Missing Cloudflare credentials!');
@@ -70,26 +58,21 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /**
- * Fetch photos from SerpAPI photos endpoint
+ * Extract thumbnail URL from serp_payload
  */
-async function fetchPhotosFromSerpAPI(photosLink) {
-  // Add API key to the photos link
-  const url = new URL(photosLink);
-  url.searchParams.set('api_key', SERPAPI_API_KEY);
+function getThumbnailFromPayload(serpPayload) {
+  // The payload has a thumbnail field with the Google Maps image URL
+  // Example: "https://lh3.googleusercontent.com/p/AF1QipPnA2qKRkdKVWWb0XoCv0wmqnfrxTShx08y54iw=w174-h92-k-no"
 
-  const response = await fetch(url.toString());
-
-  if (!response.ok) {
-    throw new Error(`SerpAPI request failed: HTTP ${response.status}`);
+  if (serpPayload.thumbnail) {
+    // Optionally increase resolution by changing the size parameters
+    // w174-h92 is small, so let's request a larger version
+    const url = serpPayload.thumbnail;
+    // Change w174-h92 to w800-h600 for better quality
+    return url.replace(/w\d+-h\d+/, 'w800-h600');
   }
 
-  const data = await response.json();
-
-  if (data.error) {
-    throw new Error(`SerpAPI error: ${data.error}`);
-  }
-
-  return data;
+  return null;
 }
 
 /**
@@ -205,8 +188,8 @@ async function processLocation(location, stats) {
       ? JSON.parse(location.serp_payload)
       : location.serp_payload;
 
-    if (!serpPayload || !serpPayload.photos_link) {
-      console.log('  ⚠️  No photos_link in serp_payload');
+    if (!serpPayload) {
+      console.log('  ⚠️  No serp_payload');
       stats.skipped++;
       return;
     }
@@ -224,78 +207,61 @@ async function processLocation(location, stats) {
       return;
     }
 
-    console.log('  🔍 Fetching photos from SerpAPI...');
-    const photosData = await fetchPhotosFromSerpAPI(serpPayload.photos_link);
+    // Extract thumbnail from serp_payload (no API call needed!)
+    const imageUrl = getThumbnailFromPayload(serpPayload);
 
-    if (!photosData.photos || photosData.photos.length === 0) {
-      console.log('  ⚠️  No photos found');
+    if (!imageUrl) {
+      console.log('  ⚠️  No thumbnail in serp_payload');
       stats.skipped++;
       return;
     }
 
-    const photosToProcess = photosData.photos.slice(0, MAX_PHOTOS_PER_LOCATION);
-    console.log(`  📸 Found ${photosData.photos.length} photos, uploading ${photosToProcess.length}...`);
+    console.log(`  📸 Using thumbnail from serp_payload...`);
 
     let uploadedCount = 0;
-    for (let i = 0; i < photosToProcess.length; i++) {
-      const photo = photosToProcess[i];
 
-      // Use the highest resolution available
-      const imageUrl = photo.image || photo.thumbnail;
+    try {
+      console.log(`    ⬆️  Uploading photo...`);
 
-      if (!imageUrl) {
-        console.log(`    ⚠️  Photo ${i + 1}: No image URL`);
-        continue;
-      }
+      const cfImageId = await uploadPhoto(imageUrl, {
+        site: 'dryer-vent-cleaners',
+        location_id: location.id,
+        location_name: location.name,
+        type: 'photo',
+        source: 'serpapi-thumbnail',
+        position: 1,
+      });
 
-      try {
-        console.log(`    ⬆️  Uploading photo ${i + 1}/${photosToProcess.length}...`);
-
-        const cfImageId = await uploadPhoto(imageUrl, {
-          site: 'dryer-vent-cleaners',
+      // Store in database
+      const { error: insertError } = await supabase
+        .from('location_images')
+        .insert({
           location_id: location.id,
-          location_name: location.name,
-          type: 'photo',
-          source: 'serpapi',
-          position: i + 1,
+          cf_image_id: cfImageId,
+          image_type: 'photo',
+          is_primary: true, // Single photo is primary
+          uploaded_by: 'serpapi-migration',
+          source_url: imageUrl,
         });
 
-        // Store in database
-        const { error: insertError } = await supabase
-          .from('location_images')
-          .insert({
-            location_id: location.id,
-            cf_image_id: cfImageId,
-            image_type: 'photo',
-            is_primary: i === 0, // First photo is primary
-            uploaded_by: 'serpapi-migration',
-            source_url: imageUrl,
-          });
-
-        if (insertError) {
-          throw new Error(`Database insert failed: ${insertError.message}`);
-        }
-
-        console.log(`    ✓ Photo ${i + 1} uploaded (ID: ${cfImageId.substring(0, 12)}...)`);
-        uploadedCount++;
-        stats.photosUploaded++;
-
-        // Delay between photos
-        if (i < photosToProcess.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, PHOTO_DELAY_MS));
-        }
-
-      } catch (error) {
-        console.error(`    ✗ Failed to upload photo ${i + 1}: ${error.message}`);
-        stats.photosFailed++;
+      if (insertError) {
+        throw new Error(`Database insert failed: ${insertError.message}`);
       }
+
+      console.log(`    ✓ Photo uploaded (ID: ${cfImageId.substring(0, 12)}...)`);
+      uploadedCount++;
+      stats.photosUploaded++;
+
+    } catch (error) {
+      console.error(`    ✗ Failed to upload photo: ${error.message}`);
+      stats.photosFailed++;
     }
 
     if (uploadedCount > 0) {
-      console.log(`  ✓ Uploaded ${uploadedCount}/${photosToProcess.length} photos`);
+      console.log(`  ✓ Successfully uploaded photo`);
       stats.migrated++;
     } else {
-      console.log('  ✗ No photos uploaded');
+      console.log('  ✗ Photo upload failed');
       stats.failed++;
     }
 
@@ -318,9 +284,10 @@ async function runMigration() {
   console.log('Configuration:');
   console.log(`  Limit: ${LIMIT || 'No limit'}`);
   console.log(`  Start after: ${START_AFTER || 'Beginning'}`);
-  console.log(`  Max photos per location: ${MAX_PHOTOS_PER_LOCATION}`);
+  console.log(`  Photos per location: 1 (thumbnail from serp_payload)`);
   console.log(`  Batch size: ${BATCH_SIZE}`);
-  console.log(`  Delay: ${DELAY_MS}ms between batches\n`);
+  console.log(`  Delay: ${DELAY_MS}ms between batches`);
+  console.log(`  🎉 Zero SerpAPI calls needed!\n`);
 
   const stats = {
     total: 0,

@@ -86,7 +86,20 @@ export default function LocationHours({ location }: LocationHoursProps) {
 
   return (
     <div className="mt-4 mb-4">
-      {(!location.location_hours || location.location_hours.length === 0) ? (
+      {openStatus.isTemporarilyClosed ? (
+        // Temporarily closed - takes priority over all other states
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600">
+            <XCircle className="h-4 w-4" />
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-red-700">Temporarily Closed</div>
+            <div className="text-xs text-gray-500">
+              Current Local Time: {currentTime} {getTimezoneAbbr(location.state)}
+            </div>
+          </div>
+        </div>
+      ) : (!location.location_hours || location.location_hours.length === 0) ? (
         // No hours - assume open 24 hours
         <div className="flex items-center space-x-2 mb-3">
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600">
@@ -104,15 +117,11 @@ export default function LocationHours({ location }: LocationHoursProps) {
         <>
           <div className="flex items-start space-x-2 mb-3">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${
-              openStatus.isTemporarilyClosed
-                ? 'bg-red-100 text-red-600'
-                : openStatus.isOpen 
-                  ? 'bg-green-100 text-green-600' 
-                  : 'bg-red-100 text-red-600'
+              openStatus.isOpen
+                ? 'bg-green-100 text-green-600'
+                : 'bg-red-100 text-red-600'
             }`}>
-              {openStatus.isTemporarilyClosed ? (
-                <XCircle className="h-4 w-4" />
-              ) : openStatus.isOpen ? (
+              {openStatus.isOpen ? (
                 <CheckCircle className="h-4 w-4" />
               ) : (
                 <XCircle className="h-4 w-4" />
@@ -120,12 +129,10 @@ export default function LocationHours({ location }: LocationHoursProps) {
             </div>
             <div className="flex-1">
               <div className="text-sm font-semibold text-gray-900">
-                {openStatus.isTemporarilyClosed ? 'Temporarily Closed' : (
-                  openStatus.isOpen ? <span className="text-green-700">Open Now</span> : (
-                    !openStatus.isOpen && !openStatus.isTemporarilyClosed && openStatus.nextOpen 
-                      ? <span><span className="text-red-700">Closed</span> • Opens {openStatus.nextOpen}</span>
-                      : <span className="text-red-700">Closed</span>
-                  )
+                {openStatus.isOpen ? <span className="text-green-700">Open Now</span> : (
+                  openStatus.nextOpen
+                    ? <span><span className="text-red-700">Closed</span> • Opens {openStatus.nextOpen}</span>
+                    : <span className="text-red-700">Closed</span>
                 )}
               </div>
               <div className="text-xs text-gray-500">

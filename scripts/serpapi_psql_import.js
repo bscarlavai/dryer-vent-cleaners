@@ -12,18 +12,18 @@ const locationSlug = args[0]; // Optional: specific location folder to import
 
 async function psqlImport() {
   console.log('Starting PostgreSQL import using COPY commands...\n');
-  
+
   // You need to get these from your Supabase dashboard:
   // 1. Go to your Supabase project dashboard
   // 2. Go to Settings > Database
   // 3. Find "Connection string" or "Connection pooling"
   // 4. Use the "Direct connection" string (not the pooling one)
-  
+
   // Example format:
   // postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
-  
+
   const dbUrl = process.env.DATABASE_URL;
-  
+
   if (!dbUrl) {
     console.error('Missing DATABASE_URL environment variable');
     console.log('\nTo get your database URL:');
@@ -35,7 +35,7 @@ async function psqlImport() {
     console.log('DATABASE_URL=postgresql://postgres:your-password@db.your-project-ref.supabase.co:5432/postgres');
     process.exit(1);
   }
-  
+
   try {
     // Determine CSV directory
     let csvDir;
@@ -208,7 +208,33 @@ async function psqlImport() {
     console.log('\n' + '='.repeat(60));
     console.log('All imports completed successfully!');
     console.log('='.repeat(60));
-    
+
+    // Move imported folders to serpapi_data_imported
+    console.log('\n📦 Moving imported data to archive...');
+    const importedBaseDir = path.join(__dirname, '..', 'serpapi_data_imported');
+
+    // Create base imported directory if it doesn't exist
+    if (!fs.existsSync(importedBaseDir)) {
+      fs.mkdirSync(importedBaseDir, { recursive: true });
+    }
+
+    for (const csvDirPath of dirsToImport) {
+      const locationName = path.basename(csvDirPath);
+      const sourcePath = csvDirPath;
+      const destPath = path.join(importedBaseDir, locationName);
+
+      // Remove existing folder if it exists (to overwrite)
+      if (fs.existsSync(destPath)) {
+        fs.rmSync(destPath, { recursive: true, force: true });
+      }
+
+      // Move the folder
+      fs.renameSync(sourcePath, destPath);
+      console.log(`  ✓ Moved: ${locationName}`);
+    }
+
+    console.log('\n✅ All data archived to serpapi_data_imported/');
+
   } catch (error) {
     console.error('Import failed:', error.message);
     if (error.stderr) {
