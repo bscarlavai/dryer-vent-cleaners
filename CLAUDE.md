@@ -147,7 +147,7 @@ The app uses Next.js 14 App Router with the following URL patterns:
 - CSS optimization enabled in production
 - Console logs removed in production builds
 - Security headers configured in `next.config.js`
-- Google Analytics (G-MX6CGQHPNF) loaded via Next.js Script component
+- Google Analytics (G-2R86JSGLGX) loaded via Next.js Script component
 
 ### Data Import Workflow
 
