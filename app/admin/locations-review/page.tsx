@@ -17,6 +17,7 @@ interface Location {
   google_rating?: number;
   location_url?: string;
   business_type?: string;
+  business_types?: string[];
   review_status?: 'pending' | 'approved' | 'rejected';
 }
 
@@ -269,8 +270,10 @@ function LocationsReviewPageInner() {
                   <div className="flex-1">
                     <h2 className="text-xl font-semibold text-tarawera mb-2">{loc.name}</h2>
                     {loc.street_address && <div className="text-gray-700 mb-1">{loc.street_address}</div>}
-                    {loc.business_type && (
-                      <div className="text-xs text-gray-500 mb-1">Type: {loc.business_type}</div>
+                    {loc.business_types && loc.business_types.length > 0 && (
+                      <div className="text-xs text-gray-500 mb-1">
+                        Types: {[...loc.business_types].sort().join(', ')}
+                      </div>
                     )}
                     {loc.business_status && (
                       <div className="text-xs text-gray-500 mb-1">Status: {loc.business_status}</div>

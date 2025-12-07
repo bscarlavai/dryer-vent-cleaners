@@ -303,7 +303,7 @@ export default function LocationPageClient({ location: initialLocation, params }
                     <div className="flex items-start mb-2">
                       <MapPin className="h-5 w-5 mr-3 text-gray-400 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-gray-900">{location.street_address}</p>
+                        <p className="text-gray-900">{location.street_address.split(',')[0]}</p>
                         <p className="text-gray-600">{location.city}, {location.state} {location.postal_code}</p>
                       </div>
                     </div>

@@ -16,22 +16,6 @@ interface PageProps {
   }
 }
 
-// Helper function to clean URLs consistently
-function cleanUrl(url: string): string {
-  if (!url) return ''
-  
-  // Remove protocol
-  let cleaned = url.replace(/^https?:\/\//, '')
-  
-  // Remove www
-  cleaned = cleaned.replace(/^www\./, '')
-  
-  // Remove trailing slash
-  cleaned = cleaned.replace(/\/$/, '')
-  
-  return cleaned
-}
-
 // Helper function to convert slug to proper state name
 function slugToStateName(slug: string): string {
   // Common words that should remain lowercase in state names
@@ -51,11 +35,6 @@ function slugToStateName(slug: string): string {
       return word.charAt(0).toUpperCase() + word.slice(1)
     })
     .join(' ')
-}
-
-function truncate(str: string, maxLength: number) {
-  if (str.length <= maxLength) return str;
-  return str.slice(0, maxLength).replace(/\s+\S*$/, '') + '…';
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -81,8 +60,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 async function getLocationsByState(stateSlug: string) {
   try {
-    const stateName = slugToStateName(stateSlug)
-
     // Get locations with location_images included
     const { data, error } = await getLocations({ state: stateSlug })
 

@@ -1,9 +1,14 @@
 const fs = require('fs');
+const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 require('dotenv').config({ path: '.env.local' });
 
 const execAsync = promisify(exec);
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const locationSlug = args[0]; // Optional: specific location folder to import
 
 async function psqlImport() {
   console.log('Starting PostgreSQL import using COPY commands...\n');
@@ -32,12 +37,46 @@ async function psqlImport() {
   }
   
   try {
-    // Check if CSV files exist
-    const csvDir = './serpapi_data';
+    // Determine CSV directory
+    let csvDir;
+    if (locationSlug) {
+      csvDir = `./serpapi_data/${locationSlug}`;
+      console.log(`Importing from specific location: ${locationSlug}\n`);
+    } else {
+      // Import from all location directories
+      csvDir = './serpapi_data';
+    }
+
     if (!fs.existsSync(csvDir)) {
-      console.error('CSV files not found. Please run the split script first:');
-      console.log('node scripts/import_from_serpapi.js');
+      console.error(`CSV directory not found: ${csvDir}`);
+      console.log('Please run the import script first:');
+      console.log('node scripts/import_from_serpapi.js --location "City, State"');
       process.exit(1);
+    }
+
+    // If no location slug provided, find all subdirectories
+    const dirsToImport = [];
+    if (!locationSlug) {
+      const entries = fs.readdirSync(csvDir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const locationsFile = path.join(csvDir, entry.name, 'locations.csv');
+          if (fs.existsSync(locationsFile)) {
+            dirsToImport.push(path.join(csvDir, entry.name));
+          }
+        }
+      }
+
+      if (dirsToImport.length === 0) {
+        console.error('No location directories found with CSV files');
+        process.exit(1);
+      }
+
+      console.log(`Found ${dirsToImport.length} location(s) to import:\n`);
+      dirsToImport.forEach(dir => console.log(`  - ${path.basename(dir)}`));
+      console.log('');
+    } else {
+      dirsToImport.push(csvDir);
     }
     
     // Parse the database URL to handle special characters in password
@@ -46,7 +85,14 @@ async function psqlImport() {
     const encodedPassword = encodeURIComponent(password);
     url.password = encodedPassword;
     const encodedDbUrl = url.toString();
-    
+
+    // Import each location directory
+    for (const csvDirPath of dirsToImport) {
+      const locationName = path.basename(csvDirPath);
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`Importing: ${locationName}`);
+      console.log('='.repeat(60));
+
     // Import locations
     console.log('Importing locations...');
     await execAsync(
@@ -57,15 +103,16 @@ async function psqlImport() {
     );
     await execAsync(`psql "${encodedDbUrl}" -c "\\COPY locations_staging (
         id, name, slug, city_slug, website_url, phone, email, street_address, city, state, postal_code, country,
-        latitude, longitude, description, business_type, business_status, google_rating, review_count, reviews_tags,
+        latitude, longitude, description, business_type, business_types, business_status, google_rating, review_count, reviews_tags,
         working_hours, price_level, photo_url, logo_url, street_view_url, reservation_urls, booking_appointment_url,
-        menu_url, order_urls, location_url, google_place_id, google_id, google_verified, updated_at
+        menu_url, order_urls, location_url, google_place_id, google_id, google_verified, updated_at, serp_payload
       )
-      FROM '${csvDir}/locations.csv'
+      FROM '${csvDirPath}/locations.csv'
       WITH (FORMAT csv, HEADER true, FORCE_NULL (
         email, website_url, phone, street_address, city, state, postal_code, country,
-        latitude, longitude, description, business_type, business_status, google_rating, google_verified,
-        review_count, working_hours, price_level, photo_url, logo_url, street_view_url, google_id, updated_at, reviews_tags, reservation_urls, order_urls
+        latitude, longitude, description, business_type, business_types, business_status, google_rating, google_verified,
+        review_count, working_hours, price_level, photo_url, logo_url, street_view_url, google_id, updated_at, reviews_tags,
+        reservation_urls, order_urls, serp_payload
       ))"`);
       // Update slugs to be unique for new locations that would conflict with existing data, but not for true duplicates
     await execAsync(`psql "${encodedDbUrl}" -c "UPDATE locations_staging ls
@@ -79,21 +126,21 @@ async function psqlImport() {
     
     await execAsync(`psql "${encodedDbUrl}" -c "INSERT INTO locations (
         id, name, slug, city_slug, website_url, phone, email, street_address, city, state, postal_code, country,
-        latitude, longitude, description, business_type, business_status, google_rating, review_count, reviews_tags,
+        latitude, longitude, description, business_type, business_types, business_status, google_rating, review_count, reviews_tags,
         working_hours, price_level, photo_url, logo_url, street_view_url, google_place_id, google_id, google_verified, updated_at,
-        reservation_urls, booking_appointment_url, menu_url, order_urls, location_url
+        reservation_urls, booking_appointment_url, menu_url, order_urls, location_url, serp_payload
       )
-      SELECT 
+      SELECT
         id, name, slug, city_slug, website_url, phone, email, street_address, city, state, postal_code, country,
-        latitude, longitude, description, business_type, business_status, google_rating, review_count, reviews_tags,
+        latitude, longitude, description, business_type, business_types, business_status, google_rating, review_count, reviews_tags,
         working_hours, price_level, photo_url, logo_url, street_view_url, google_place_id, google_id, google_verified, updated_at,
-        reservation_urls, booking_appointment_url, menu_url, order_urls, location_url
+        reservation_urls, booking_appointment_url, menu_url, order_urls, location_url, serp_payload
       FROM locations_staging
       WHERE NOT EXISTS (SELECT 1 FROM locations WHERE locations.google_place_id = locations_staging.google_place_id)
       ON CONFLICT (slug, state, city) DO NOTHING;"`);
     await execAsync(`psql "${encodedDbUrl}" -c "UPDATE locations SET
       slug = locations_staging.slug, city_slug = locations_staging.city_slug, website_url = locations_staging.website_url, phone = locations_staging.phone, email = locations_staging.email,
-      google_verified = locations_staging.google_verified, business_status = locations_staging.business_status,
+      google_verified = locations_staging.google_verified, business_status = locations_staging.business_status, business_types = locations_staging.business_types,
       description = locations_staging.description, google_rating = locations_staging.google_rating, review_count = locations_staging.review_count,
       reviews_tags = locations_staging.reviews_tags,
       working_hours = locations_staging.working_hours, price_level = locations_staging.price_level, photo_url = locations_staging.photo_url,
@@ -103,7 +150,8 @@ async function psqlImport() {
       booking_appointment_url = locations_staging.booking_appointment_url,
       menu_url = locations_staging.menu_url,
       order_urls = locations_staging.order_urls,
-      location_url = locations_staging.location_url
+      location_url = locations_staging.location_url,
+      serp_payload = locations_staging.serp_payload
       FROM locations_staging
       WHERE locations.google_place_id = locations_staging.google_place_id;"`);
     await execAsync(`psql "${encodedDbUrl}" -c "DROP TABLE locations_staging;"`);
@@ -117,7 +165,7 @@ async function psqlImport() {
       `psql "${encodedDbUrl}" -c "CREATE TABLE location_amenities_staging (LIKE location_amenities INCLUDING DEFAULTS EXCLUDING CONSTRAINTS);"`
     );
     await execAsync(
-      `psql "${encodedDbUrl}" -c "\\COPY location_amenities_staging (location_id, amenity_name, amenity_category) FROM '${csvDir}/location_amenities.csv' WITH (FORMAT csv, HEADER true)"`
+      `psql "${encodedDbUrl}" -c "\\COPY location_amenities_staging (location_id, amenity_name, amenity_category) FROM '${csvDirPath}/location_amenities.csv' WITH (FORMAT csv, HEADER true)"`
     );
     await execAsync(`psql "${encodedDbUrl}" -c "INSERT INTO location_amenities (location_id, amenity_name, amenity_category)
       SELECT location_id, amenity_name, amenity_category
@@ -140,7 +188,7 @@ async function psqlImport() {
       `psql "${encodedDbUrl}" -c "CREATE TABLE location_hours_staging (LIKE location_hours INCLUDING DEFAULTS EXCLUDING CONSTRAINTS);"`
     );
     await execAsync(
-      `psql "${encodedDbUrl}" -c "\\COPY location_hours_staging (location_id, day_of_week, open_time, close_time, is_closed) FROM '${csvDir}/location_hours.csv' WITH (FORMAT csv, HEADER true)"`
+      `psql "${encodedDbUrl}" -c "\\COPY location_hours_staging (location_id, day_of_week, open_time, close_time, is_closed) FROM '${csvDirPath}/location_hours.csv' WITH (FORMAT csv, HEADER true)"`
     );
     await execAsync(`psql "${encodedDbUrl}" -c "INSERT INTO location_hours (location_id, day_of_week, open_time, close_time, is_closed)
       SELECT location_hours_staging.location_id, location_hours_staging.day_of_week, location_hours_staging.open_time, location_hours_staging.close_time, location_hours_staging.is_closed
@@ -153,9 +201,13 @@ async function psqlImport() {
       FROM location_hours_staging
       WHERE location_hours.location_id = location_hours_staging.location_id AND location_hours.day_of_week = location_hours_staging.day_of_week;"`);
     await execAsync(`psql "${encodedDbUrl}" -c "DROP TABLE location_hours_staging;"`);
-    
 
-    console.log('\nImport completed successfully!');
+    console.log(`✓ Completed import for: ${locationName}`);
+    }
+
+    console.log('\n' + '='.repeat(60));
+    console.log('All imports completed successfully!');
+    console.log('='.repeat(60));
     
   } catch (error) {
     console.error('Import failed:', error.message);

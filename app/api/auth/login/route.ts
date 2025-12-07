@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         ...options,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production' ? '.selfcarwashfinder.com' : 'localhost',
+        domain: process.env.NODE_ENV === 'production' ? '.dryerventcleaners.co' : 'localhost',
       });
     });
     return response;

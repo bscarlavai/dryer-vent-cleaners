@@ -74,8 +74,6 @@ export default async function StatesPage() {
     getStatesWithLocations(),
     getStats()
   ])
-  const totalLocations = states.reduce((sum, state) => sum + state.locationCount, 0)
-  const totalStates = states.length
   const sortedStates = [...states].sort((a, b) => b.locationCount - a.locationCount)
   const topStates = sortedStates.slice(0, 3)
   const alphaStates = [...states].sort((a, b) => a.name.localeCompare(b.name))

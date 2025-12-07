@@ -27,8 +27,8 @@ const slugify = require('../lib/slugify');
 // Configuration
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY;
 const SEARCH_QUERY = 'dryer vent cleaning';
-const ZOOM_LEVEL = '18'; // High zoom for detailed results
-const OUTPUT_DIR = path.join(__dirname, '..', 'serpapi_data');
+const ZOOM_LEVEL = '11'; // Metro area coverage (optimal for city searches)
+const BASE_OUTPUT_DIR = path.join(__dirname, '..', 'serpapi_data');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -60,6 +60,75 @@ if (!LOCATION) {
 }
 
 /**
+ * Convert state abbreviation to full name
+ */
+const STATE_ABBR_TO_NAME = {
+  'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California',
+  'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia',
+  'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa',
+  'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+  'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri',
+  'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey',
+  'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio',
+  'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+  'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont',
+  'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming',
+  'DC': 'District of Columbia'
+};
+
+function stateAbbrToName(abbr) {
+  return STATE_ABBR_TO_NAME[abbr?.toUpperCase()] || abbr;
+}
+
+/**
+ * Reverse geocode GPS coordinates to get location info
+ * Uses Nominatim (OpenStreetMap) free API
+ */
+async function reverseGeocode(lat, lng) {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'dryer-vent-cleaners-app/1.0'
+      }
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (!data.address) {
+      return null;
+    }
+
+    const address = data.address;
+    const stateAbbr = address.state_code || address['ISO3166-2-lvl4']?.split('-')[1];
+    const state = stateAbbr ? stateAbbrToName(stateAbbr) : (address.state || '');
+    const city = address.city || address.town || address.village || address.county || '';
+    const postal_code = address.postcode || '';
+
+    if (!state || !city) {
+      return null;
+    }
+
+    // Build a service area address
+    const street_address = `${city}, ${state}${postal_code ? ' ' + postal_code : ''}`;
+
+    return {
+      street_address,
+      city,
+      state,
+      postal_code
+    };
+  } catch (error) {
+    console.log(`    ⚠️  Reverse geocoding failed: ${error.message}`);
+    return null;
+  }
+}
+
+/**
  * Parse address string into components
  * Example: "8 N Grant St, Brownsburg, IN 46112, United States"
  */
@@ -72,8 +141,8 @@ function parseAddress(addressStr) {
   // Split by commas
   const parts = cleaned.split(',').map(p => p.trim());
 
-  if (parts.length < 3) {
-    // Invalid format, return null
+  if (parts.length < 2) {
+    // Need at least city and state+zip
     return null;
   }
 
@@ -85,14 +154,20 @@ function parseAddress(addressStr) {
     return null;
   }
 
-  const state = stateZipMatch[1];
+  const stateAbbr = stateZipMatch[1];
   const postal_code = stateZipMatch[2];
 
   // Second to last part is city
   const city = parts[parts.length - 2];
 
-  // Everything else is street address
-  const street_address = parts.slice(0, -2).join(', ');
+  // Convert state abbreviation to full name
+  const state = stateAbbrToName(stateAbbr);
+
+  // street_address should be the FULL address string (with converted state name)
+  // Example: "8 N Grant St, Brownsburg, Indiana 46112"
+  const street_address = parts.length > 2
+    ? `${parts.slice(0, -2).join(', ')}, ${city}, ${state} ${postal_code}`
+    : `${city}, ${state} ${postal_code}`;
 
   return {
     street_address,
@@ -100,6 +175,29 @@ function parseAddress(addressStr) {
     state,
     postal_code
   };
+}
+
+/**
+ * Parse open_state to determine business_status
+ * Examples: "Temporarily closed", "Permanently closed", "Open", "Closed"
+ */
+function parseBusinessStatus(openState) {
+  if (!openState) {
+    return 'OPERATIONAL';
+  }
+
+  const state = openState.toLowerCase();
+
+  if (state.includes('permanently closed') || state.includes('permanently close')) {
+    return 'CLOSED_PERMANENTLY';
+  }
+
+  if (state.includes('temporarily closed') || state.includes('temporarily close')) {
+    return 'CLOSED_TEMPORARILY';
+  }
+
+  // Default to operational (includes "Open", "Closes at X", etc.)
+  return 'OPERATIONAL';
 }
 
 /**
@@ -263,6 +361,29 @@ function extractAmenities(extensions, serviceOptions) {
 }
 
 /**
+ * Extract actual URL from Google redirect URL
+ * Example: /url?q=https://example.com&... -> https://example.com
+ */
+function extractRealUrl(googleUrl) {
+  if (!googleUrl) return '';
+
+  // If it's already a direct URL, return it
+  if (!googleUrl.startsWith('/url?q=')) {
+    return googleUrl;
+  }
+
+  try {
+    // Parse the redirect URL
+    const url = new URL(googleUrl, 'https://google.com');
+    const realUrl = url.searchParams.get('q');
+    return realUrl || googleUrl;
+  } catch (e) {
+    // If parsing fails, return original
+    return googleUrl;
+  }
+}
+
+/**
  * Helper to always quote every field (matching split_csv.js)
  */
 function quoteAll(field) {
@@ -307,22 +428,87 @@ async function fetchFromSerpAPI(query, location, page = 1) {
   const data = await response.json();
 
   if (data.error) {
-    throw new Error(`SerpAPI error: ${data.error}`);
+    if (data.error.includes("Google hasn't returned any results for this query")) {
+      console.warn(`  ⚠️  SerpAPI returned no results for this query on page ${page}. Continuing...`);
+      return { local_results: [] }; // Return empty results to continue processing
+    } else {
+      throw new Error(`SerpAPI error: ${data.error}`);
+    }
   }
 
   return data;
 }
 
 /**
+ * Save progress to CSV files
+ */
+function saveProgressToFiles(allLocations, allHours, allAmenities, outputDir) {
+  // Create output directory
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  // Write locations CSV
+  const locationsCsv = [
+    ['id', 'name', 'slug', 'city_slug', 'website_url', 'phone', 'email', 'street_address', 'city', 'state', 'postal_code', 'country', 'latitude', 'longitude', 'description', 'business_type', 'business_types', 'business_status', 'google_rating',
+      'review_count', 'reviews_tags', 'working_hours', 'price_level', 'photo_url', 'logo_url', 'street_view_url', 'reservation_urls', 'booking_appointment_url', 'menu_url', 'order_urls', 'location_url',
+      'google_place_id', 'google_id', 'google_verified', 'updated_at', 'serp_payload'],
+    ...allLocations.map(location => [
+      location.id, location.name, location.slug, location.city_slug, location.website_url, location.phone, location.email,
+      location.street_address, location.city, location.state, location.postal_code, location.country, location.latitude,
+      location.longitude, location.description, location.business_type, location.business_types, location.business_status,
+      location.google_rating, location.review_count, location.reviews_tags, location.working_hours, location.price_level,
+      location.photo_url, location.logo_url, location.street_view_url, location.reservation_urls, location.booking_appointment_url,
+      location.menu_url, location.order_urls, location.location_url, location.google_place_id, location.google_id,
+      location.google_verified, location.updated_at, location.serp_payload
+    ])
+  ];
+
+  const locationsFile = path.join(outputDir, 'locations.csv');
+  fs.writeFileSync(locationsFile, locationsCsv.map(row => row.map(quoteAll).join(',')).join('\n'));
+
+  // Write amenities CSV
+  if (allAmenities.length > 0) {
+    const amenitiesCsv = [
+      ['location_id', 'amenity_name', 'amenity_category'],
+      ...allAmenities.map(amenity => [amenity.location_id, amenity.amenity_name, amenity.amenity_category])
+    ];
+    const amenitiesFile = path.join(outputDir, 'location_amenities.csv');
+    fs.writeFileSync(amenitiesFile, amenitiesCsv.map(row => row.map(quoteAll).join(',')).join('\n'));
+  }
+
+  // Write hours CSV
+  if (allHours.length > 0) {
+    const hoursCsv = [
+      ['location_id', 'day_of_week', 'open_time', 'close_time', 'is_closed'],
+      ...allHours.map(hour => [
+        quoteAll(hour.location_id),
+        quoteAll(hour.day_of_week),
+        quoteAll(hour.open_time),
+        quoteAll(hour.close_time),
+        (hour.is_closed === 'true' || hour.is_closed === true) ? 'true' : (hour.is_closed === 'false' || hour.is_closed === false ? 'false' : '')
+      ])
+    ];
+    const hoursFile = path.join(outputDir, 'location_hours.csv');
+    fs.writeFileSync(hoursFile, hoursCsv.map(row => row.join(',')).join('\n'));
+  }
+}
+
+/**
  * Main function
  */
 async function main() {
+  // Create location-specific output directory
+  const locationSlug = slugify(LOCATION);
+  const OUTPUT_DIR = path.join(BASE_OUTPUT_DIR, locationSlug);
+
   console.log('='.repeat(60));
   console.log('SerpAPI Google Maps Import');
   console.log('='.repeat(60));
   console.log(`Location: ${LOCATION}`);
   console.log(`Query: ${CUSTOM_QUERY}`);
   console.log(`Zoom Level: ${ZOOM_LEVEL}`);
+  console.log(`Output Directory: ${OUTPUT_DIR}`);
   console.log(`Dry Run: ${DRY_RUN ? 'YES (no files will be written)' : 'NO (will write CSV files)'}`);
   if (RESULT_LIMIT) {
     console.log(`Result Limit: ${RESULT_LIMIT}`);
@@ -352,7 +538,21 @@ async function main() {
       // Process each location
       for (const result of results) {
         // Parse address
-        const addressParts = parseAddress(result.address);
+        let addressParts = parseAddress(result.address);
+
+        // If address parsing failed but we have GPS coordinates, try reverse geocoding
+        if (!addressParts && result.gps_coordinates?.latitude && result.gps_coordinates?.longitude) {
+          console.log(`  🌍 No address for ${result.title}, trying reverse geocoding...`);
+          addressParts = await reverseGeocode(result.gps_coordinates.latitude, result.gps_coordinates.longitude);
+
+          if (addressParts) {
+            console.log(`     ✓ Determined location: ${addressParts.city}, ${addressParts.state}`);
+          }
+
+          // Small delay to respect Nominatim rate limits (1 request per second)
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
         if (!addressParts) {
           console.log(`  ⚠️  Skipping ${result.title} - could not parse address: ${result.address}`);
           continue;
@@ -369,7 +569,7 @@ async function main() {
           name: result.title,
           slug: locationSlug,
           city_slug: citySlug,
-          website_url: result.website || '',
+          website_url: extractRealUrl(result.website),
           phone: result.phone || '',
           email: '',
           street_address: addressParts.street_address,
@@ -379,9 +579,12 @@ async function main() {
           country: 'United States',
           latitude: result.gps_coordinates?.latitude || '',
           longitude: result.gps_coordinates?.longitude || '',
-          description: '',
+          description: result.description || '',
           business_type: result.type || result.types?.[0] || '',
-          business_status: 'OPERATIONAL',
+          business_types: result.types && result.types.length > 0
+            ? `{${result.types.map(t => `"${t.replace(/"/g, '\\"')}"`).join(',')}}`
+            : '',
+          business_status: parseBusinessStatus(result.open_state),
           google_rating: result.rating || '',
           review_count: result.reviews || '',
           reviews_tags: '',
@@ -394,11 +597,12 @@ async function main() {
           booking_appointment_url: result.book_online || '',
           menu_url: '',
           order_urls: '',
-          location_url: '',
+          location_url: `https://www.google.com/maps/place/?q=place_id:${result.place_id}`,
           google_place_id: result.place_id,
-          google_id: '',
+          google_id: result.provider_id || '',
           google_verified: '',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
+          serp_payload: JSON.stringify(result)
         };
 
         allLocations.push(location);
@@ -431,6 +635,11 @@ async function main() {
         }
       }
 
+      // Save progress after each page (in case of failure)
+      if (!DRY_RUN && allLocations.length > 0) {
+        saveProgressToFiles(allLocations, allHours, allAmenities, OUTPUT_DIR);
+      }
+
       // Check for pagination
       if (data.serpapi_pagination?.next && hasMore) {
         page++;
@@ -453,98 +662,21 @@ async function main() {
       console.log('\n⚠️  This was a DRY RUN - no files were written');
       console.log('Run without --dry-run to save CSV files');
     } else {
-      // Create output directory
-      if (!fs.existsSync(OUTPUT_DIR)) {
-        fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-      }
+      // Final save (already saved incrementally after each page)
+      saveProgressToFiles(allLocations, allHours, allAmenities, OUTPUT_DIR);
 
-      // Write locations CSV (matching split_csv.js format exactly)
-      const locationsCsv = [
-        // Header
-        ['id', 'name', 'slug', 'city_slug', 'website_url', 'phone', 'email', 'street_address', 'city', 'state', 'postal_code', 'country', 'latitude', 'longitude', 'description', 'business_type', 'business_status', 'google_rating',
-          'review_count', 'reviews_tags', 'working_hours', 'price_level', 'photo_url', 'logo_url', 'street_view_url', 'reservation_urls', 'booking_appointment_url', 'menu_url', 'order_urls', 'location_url',
-          'google_place_id', 'google_id', 'google_verified', 'updated_at'],
-        // Data rows
-        ...allLocations.map(location => [
-          location.id,
-          location.name,
-          location.slug,
-          location.city_slug,
-          location.website_url,
-          location.phone,
-          location.email,
-          location.street_address,
-          location.city,
-          location.state,
-          location.postal_code,
-          location.country,
-          location.latitude,
-          location.longitude,
-          location.description,
-          location.business_type,
-          location.business_status,
-          location.google_rating,
-          location.review_count,
-          location.reviews_tags,
-          location.working_hours,
-          location.price_level,
-          location.photo_url,
-          location.logo_url,
-          location.street_view_url,
-          location.reservation_urls,
-          location.booking_appointment_url,
-          location.menu_url,
-          location.order_urls,
-          location.location_url,
-          location.google_place_id,
-          location.google_id,
-          location.google_verified,
-          location.updated_at
-        ])
-      ];
-
-      const locationsFile = path.join(OUTPUT_DIR, 'locations.csv');
-      fs.writeFileSync(locationsFile, locationsCsv.map(row => row.map(quoteAll).join(',')).join('\n'));
-      console.log(`\n✓ Wrote ${locationsFile}`);
-
-      // Write amenities CSV (matching split_csv.js format)
+      console.log(`\n✓ Wrote ${path.join(OUTPUT_DIR, 'locations.csv')}`);
       if (allAmenities.length > 0) {
-        const amenitiesCsv = [
-          ['location_id', 'amenity_name', 'amenity_category'],
-          ...allAmenities.map(amenity => [
-            amenity.location_id,
-            amenity.amenity_name,
-            amenity.amenity_category
-          ])
-        ];
-
-        const amenitiesFile = path.join(OUTPUT_DIR, 'location_amenities.csv');
-        fs.writeFileSync(amenitiesFile, amenitiesCsv.map(row => row.map(quoteAll).join(',')).join('\n'));
-        console.log(`✓ Wrote ${amenitiesFile}`);
+        console.log(`✓ Wrote ${path.join(OUTPUT_DIR, 'location_amenities.csv')}`);
       }
-
-      // Write hours CSV (matching split_csv.js format)
       if (allHours.length > 0) {
-        const hoursCsv = [
-          ['location_id', 'day_of_week', 'open_time', 'close_time', 'is_closed'],
-          ...allHours.map(hour => [
-            quoteAll(hour.location_id),
-            quoteAll(hour.day_of_week),
-            quoteAll(hour.open_time),
-            quoteAll(hour.close_time),
-            (hour.is_closed === 'true' || hour.is_closed === true) ? 'true' : (hour.is_closed === 'false' || hour.is_closed === false ? 'false' : '')
-          ])
-        ];
-
-        const hoursFile = path.join(OUTPUT_DIR, 'location_hours.csv');
-        fs.writeFileSync(hoursFile, hoursCsv.map(row => row.join(',')).join('\n'));
-        console.log(`✓ Wrote ${hoursFile}`);
+        console.log(`✓ Wrote ${path.join(OUTPUT_DIR, 'location_hours.csv')}`);
       }
 
       console.log('\n📁 Files saved to: ' + OUTPUT_DIR);
       console.log('\nNext steps:');
       console.log('1. Review the CSV files');
-      console.log('2. Import to database using: node scripts/psql_import.js');
+      console.log(`2. Import to database using: node scripts/serpapi_psql_import.js ${locationSlug}`);
     }
 
     console.log('='.repeat(60) + '\n');
