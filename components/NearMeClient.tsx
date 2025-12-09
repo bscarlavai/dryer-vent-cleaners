@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Search, MapPinIcon, Coffee, Telescope, BadgeQuestionMark, BrushCleaning } from 'lucide-react'
 import { getSupabaseClient } from '@/lib/supabase'
-import { searchLocationsByLatLng, searchLocationsByZip } from '@/lib/locationUtils';
+import { searchLocationsByLatLng } from '@/lib/locationUtils';
 import LocationCard from '@/components/LocationCard'
 import TopStatesSection from './TopStatesSection';
 import { getOpen24HourLocationCount } from '@/lib/stateUtils'
@@ -75,13 +75,27 @@ export default function NearMeClient() {
     setIsSearching(true)
     setSearchError('')
     try {
-      const results = await searchLocationsByZip(zip, Number(radius))
-      setSearchResults(results)
-      if (results.length === 0) {
+      // Use server-side API to avoid CORS issues on mobile
+      const response = await fetch(`/api/nearby?zip=${encodeURIComponent(zip)}&radius=${radius}`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setSearchError('Invalid zip code. Please enter a valid 5-digit US zip code.')
+        } else {
+          setSearchError('Error searching. Please try again.')
+        }
+        setSearchResults([])
+        return
+      }
+
+      setSearchResults(data.results || [])
+      if (!data.results || data.results.length === 0) {
         setSearchError(`No dryer vent cleaning services found within ${radius} miles of this zip code. Try expanding your search or browse by state.`)
       }
     } catch (error) {
-      setSearchError('Invalid zip code. Please enter a valid 5-digit US zip code.')
+      setSearchError('Error searching. Please try again.')
+      setSearchResults([])
     } finally {
       setIsSearching(false)
     }
