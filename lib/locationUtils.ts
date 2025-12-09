@@ -24,9 +24,14 @@ export async function getCoordinatesFromZip(zipCode: string): Promise<{latitude:
       },
     };
 
-    // Add Cloudflare-specific caching if running in Workers runtime
-    // This is only available in Cloudflare Workers, not during build
-    if (typeof globalThis !== 'undefined' && 'caches' in globalThis) {
+    // Add Cloudflare-specific caching if running in Workers runtime (not browser)
+    // Check for Cloudflare Workers by looking for caches.default (Workers-specific)
+    // Browsers have 'caches' but not 'caches.default'
+    const isCloudflareWorker = typeof globalThis !== 'undefined' &&
+      'caches' in globalThis &&
+      typeof (globalThis as any).caches?.default !== 'undefined';
+
+    if (isCloudflareWorker) {
       fetchOptions.cf = {
         cacheTtl: 86400, // Cache for 24 hours at Cloudflare edge
         cacheEverything: true,
