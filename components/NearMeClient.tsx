@@ -91,10 +91,11 @@ export default function NearMeClient() {
     e.preventDefault()
     if (!zipCode.trim()) return
 
-    // Update the URL with the new zip (shallow routing, no reload)
-    router.replace(`/dryer-vent-cleaning-near-me?zip=${encodeURIComponent(zipCode.trim())}`)
-
+    // Run the search first, then update URL after to avoid race conditions
     await autoSearch(zipCode.trim())
+
+    // Update the URL after search completes (for bookmarking/sharing)
+    router.replace(`/dryer-vent-cleaning-near-me?zip=${encodeURIComponent(zipCode.trim())}`, { scroll: false })
   }
 
   const handleLocationSearch = () => {
