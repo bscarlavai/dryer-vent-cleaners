@@ -6,7 +6,7 @@ import slugify from '@/lib/slugify'
 
 export async function GET() {
   const baseUrl = 'https://www.dryerventcleaners.co'
-  const batchSize = 2000; // Match the batch size in sitemap-locations-[batch].xml
+  const batchSize = 1000; // Match the batch size in sitemap-locations-[batch].xml
 
   try {
     const supabase = getSupabaseClient();
